@@ -1,0 +1,176 @@
+.GuardButton {
+    width: 90px;
+    height: 80px;
+    margin: auto;
+    color: #ffffff00;
+    text-align: center;
+    box-shadow: 1px 2px 3px #eeeeee;
+    box-sizing: border-box;
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    font: inherit;
+    font-weight: bold;
+    /* animation: showing 3s; */
+}
+
+.ShowHp {
+    margin: 0px;
+    /* background-color: white; */
+    font-weight: 1000;
+    animation: showingHp 2s;
+}
+
+@keyframes showing {
+    0% { color: rgb(255, 0 ,0, 1);}
+    20% {color: rgb(255, 0 ,0, 0.7);}
+    50% { color: rgb(255, 0 ,0, 0.5);}
+    70% { color: rgb(255, 0 ,0, 0.2);}
+    100% { color: rgb(255, 0 ,0, 0);}
+}
+
+@keyframes showingHp {
+    0% { color: rgb(255, 0 ,0, 1);}
+    20% {color: rgb(255, 0 ,0, 0.7);}
+    50% { color: rgb(255, 0 ,0, 0.5);}
+    70% { color: rgb(255, 0 ,0, 0.2);}
+    100% { color: rgb(255, 0 ,0, 0);}
+}
+
+.red.Clickable {
+    border: 6px outset red;
+    background-color:#ffb2b2;
+}
+.blue.Clickable {
+    border: 6px outset #1f83ff;
+    background-color:#79c7ff;
+}
+.King {
+    background-image: url("../../../assets/images/King.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.Knight {
+    background-image: url("../../../assets/images/Knight.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.Wizard {
+    background-image: url("../../../assets/images/Wizard.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.Archer {
+    background-image: url("../../../assets/images/Archer.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.Assassin {
+    background-image: url("../../../assets/images/Assassin.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.Angel {
+    background-image: url("../../../assets/images/Angel.png");
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.blue:hover {
+    /* border: 2px solid blue; */
+    background-color:white;
+}
+.red:hover {
+    background-color:white;
+}
+.red:disabled {
+    opacity: 0.7;
+    border: 4px outset red;
+    cursor: not-allowed;
+}
+/* .red :disabled :hover {
+    background-color: white;
+    color: black;
+    cursor: not-allowed;
+} */
+.blue:disabled {
+    border: 4px outset blue;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.blue:disabled:hover {
+    background-color: white;
+    cursor: not-allowed;
+    /* border: 2px solid blue;
+    background-color:#79c7ff; */
+}
+
+.Clickable:hover {
+    animation: shake 1.5s; 
+    animation-iteration-count: infinite; 
+}
+/* .GuardButton:disabled {
+    background-color: white;
+    color: black;
+    cursor: not-allowed;
+} */
+
+.Success {
+    color: #5C9210;
+}
+
+.Danger {
+    color: #944317;
+}
+
+.Deduction {
+    margin: 0px;
+    color: "red";
+    font-weight: "900";
+    background-color:'white';
+    position:'absolute'
+}
+
+/* .GuardButton:hover {
+    background-color: #e2e2e2;
+} */
+
+.R {
+    background-color: #ff9393;
+}
+
+.B {
+    background-color: #00d0ff57;
+}
+
+/* .Shaking {
+    background-color: #8e8e8e;
+} */
+
+.Active {
+
+    animation: shake 1.5s; 
+    animation-iteration-count: infinite; 
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}

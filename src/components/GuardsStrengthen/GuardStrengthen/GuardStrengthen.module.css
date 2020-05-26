@@ -1,0 +1,31 @@
+.Info {
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    box-shadow: 1px 2px 3px #eeeeee;
+}
+.Icon {
+    width: 40px;
+    height: 40px;
+}
+.Button {
+    text-align: center;
+}
+
+.Attribute {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+}
+
+.red {
+    color: red;
+}
+
+.Symbol {
+    font-weight:900;
+    font-size: 13px;
+}

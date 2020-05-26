@@ -1,0 +1,17 @@
+.Bar {
+    margin: auto;
+    width: 100%;
+    height: 25px;
+    box-shadow: 2px 2px 5px #b3b1b1;
+    box-sizing: border-box;
+    border-radius: 50px 50px;
+    background-color: white;
+    align-items: center;
+}
+
+.CurrentValue {
+    height: 100%;
+    border-radius: 10px 10px;
+    color: black;
+    align-items: center;
+}

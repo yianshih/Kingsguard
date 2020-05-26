@@ -1,0 +1,26 @@
+.Guard {
+    margin: 2px;
+    width: 80px;
+    height: 80px;
+    text-align: center;
+    box-shadow: 1px 2px 3px #eeeeee;
+    border: 2px solid #eeeeee;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+
+
+.Guard:hover {
+    background-color: #e2e2e2;
+}
+
+.R {
+    background-color: #ff9393;
+}
+
+.B {
+    background-color: #00d0ff57;
+}
+

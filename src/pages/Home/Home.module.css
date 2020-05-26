@@ -1,0 +1,37 @@
+.Logout {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.Options {
+    margin-top: 10%;
+    text-align: center;
+    align-items: center;
+}
+
+.Games {
+    margin-top: 20px;
+    height: 500px;
+    text-align: center;
+    overflow: auto;
+}
+
+table {
+    font-family: "Lucida Console", Courier, monospace;
+    font-size: 20px;
+    border-collapse: collapse;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}

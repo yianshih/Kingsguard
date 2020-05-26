@@ -1,0 +1,31 @@
+.Layout {
+    margin-top: 20%;
+}
+.Form {
+    width: 500px;
+    margin: auto;
+    text-align: center;
+    box-shadow: 1px 2px 3px #eeeeee;
+    border: 2px solid #eeeeee;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.GoogleLogin {
+    margin: auto;
+    margin-top: 30px;
+    width: 220px;
+    height: 60px;
+    display: flex;
+    box-shadow: 1px 2px 3px #eeeeee;
+    border: 2px solid #eeeeee;
+    padding: 10px;
+    box-sizing: border-box;
+    align-items: center;
+    text-align: center;
+}
+
+.GoogleLogin:hover {
+    background-color: whitesmoke;
+    cursor: pointer;
+}

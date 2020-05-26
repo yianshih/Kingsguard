@@ -1,26 +1,60 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+import Login from './pages/Login/Login'
+import SignUp from './pages/Signup/Signup'
+import Home from './pages/Home/Home'
+import GameController from './containers/GameController/GameController'
+import { auth } from "./services/firebase";
+import { Route, Switch } from 'react-router-dom'
+import TestComponent from './components/TestComponent'
+const App = props => {
+  //const isAuthenticated = useSelector(state => state.auth.token !== null);
+  //const dispatch = useDispatch()
+  const [authenticated, setAuthenticated] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-function App() {
+  useEffect( () => {
+    //dispatch(actions.authCheckState())
+    auth().onAuthStateChanged( user => {
+      if (user) {
+        setAuthenticated(true)
+        setLoading(false)
+      }
+      else {
+        setAuthenticated(false)
+        setLoading(false)
+      }
+    })
+
+  })
+  
+  const routers = 
+  loading ? null
+  :authenticated ?
+  (
+    <Switch>
+      <Route path="/Home" component={Home} />
+      <Route path="/game" component={GameController} />
+      <Route path="/gameController" component={GameController} />
+      <Route path="/Test" component={TestComponent} />
+      <Route path="/" component={Home} />
+      {/* <Route path="/Board" component={BoardControl} /> */}
+      {/* <Route path="/chats" component={Chat} /> */}
+      {/* <Route path="/auth" component={Auth} /> */}
+    </Switch>
+  )
+  : (
+    <Switch>
+      <Route path="/Login" component={Login} />
+      <Route path="/Signup" component={SignUp} />
+      <Route path="/" component={Login} />
+    </Switch>
+  )
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <React.Fragment>
+      {routers}
+    </React.Fragment>
+  )
 }
 
-export default App;
+export default App

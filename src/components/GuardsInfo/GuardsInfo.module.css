@@ -1,0 +1,43 @@
+.GuardsInfo {
+    width: 80%;
+    margin: 5px;
+    align-items: center;
+    text-align: center;
+    /* display: flex; */
+    /* padding: 10px; */
+}
+
+.Guard {
+    width: 120px;
+    margin: 10px;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.red {
+    border-color:  red;
+}
+
+.blue {
+    border-color:  blue;
+}
+
+.UnitImg {
+    width:40px;
+    height:40px;
+    padding: 5px;
+    border-style: ridge;
+    border-radius: 8px;
+    
+}
+
+.Attack {
+    width: 50%;
+    display: flex;
+    align-items: center;
+}
+
+.Hp {
+    align-items: center;
+    display: flex;
+}

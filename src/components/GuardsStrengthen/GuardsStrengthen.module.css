@@ -1,0 +1,25 @@
+.Board {
+    width: 100%;
+    margin: auto;
+    align-items: center;
+    text-align: center;
+    
+}
+
+.Guards {
+    margin: auto;
+    align-items: center;
+    text-align: center;
+    grid-template-columns: auto auto auto;
+    display: grid;
+    padding: 10px;
+    
+}
+
+/* .red {
+    border: 2px solid red;
+}
+
+.blue {
+    border: 2px solid blue;
+} */
