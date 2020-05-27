@@ -26,6 +26,7 @@ const GameController = (props) => {
     const squares = useSelector(state => state.squares)
     const [user] = useState(auth().currentUser)
     const [newGameInfo,setNewGameInfo] = useState(null)
+    const [actionFinish,setActionFinish] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -39,7 +40,36 @@ const GameController = (props) => {
 
     const updateGameInfo = async (data) => {
         //console.log('Uploading')
+        //console.log('Uploading',data)
+        
         let newData = {...data}
+        const isGuardsDead = [...newData.guards].filter( g => g.side === userSide && +g.hp === 0 && g.pos !== 'unknown')
+        const unplacedGuards = [...newData.guards].filter( g => (g.side === userSide) && !g.isPlaced)
+        //console.log("isGuardsDead : ",isGuardsDead)
+        //console.log("unplacedGuards : ",unplacedGuards)
+        
+        
+
+        if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
+            console.log('should fill')
+            if (newGameInfo === null) {
+                setNewGameInfo({...newData})
+            }
+            else {
+                setNewGameInfo({
+                    ...newGameInfo,
+                    guards: [...newData.guards],
+                    squares: [...newData.squares]
+                })
+            }
+            setIsFilling(true)
+            return
+        }
+        else {
+            setIsFilling(false)
+            setNewGameInfo(null)
+        }
+        
         if ( (newData.currentState.split('_')[0] === 'fighting') && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState.split("_")[0] === 'blueJoined') ) ) {
             if (checkKingBonus(newData.turn, newData.guards)) {
                 console.log('King Bonus applied')
@@ -73,7 +103,7 @@ const GameController = (props) => {
                 }
             }
         }
-        //console.log('data : ',data)
+        
         let updates = {}
         updates['/games/' + gameKey] = {...newData}
         try {
@@ -82,8 +112,9 @@ const GameController = (props) => {
             //setLoading(false)
         } catch (error) {
             console.log("Error Occurred",error.message)
-        }    
+        }
     }
+
     const deleteGame = async (key) => {
         try {
             await db.ref('/games/'+key).remove()
@@ -214,7 +245,7 @@ const GameController = (props) => {
         })
     }
     const checkKingBonus = (side,newGuards) => {
-        console.log("newGuards : ",newGuards)
+        //console.log("newGuards : ",newGuards)
         let isKingBonus = false
         if (side === 'red') {
             isKingBonus = newGuards[3].isPlaced && newGuards[3].hp > 0
@@ -284,7 +315,7 @@ const GameController = (props) => {
 
         
         const attackGuard = game.gameInfo.guards[clickedId - 1]
-        console.log("attackGuard : ",attackGuard)
+        //console.log("attackGuard : ",attackGuard)
         const newSquares = [...game.gameInfo.squares].map( s => {
             return withinDistance(attackGuard.pos,s.pos,attackGuard.step) 
             ? {...s, disabled: false}
@@ -411,11 +442,7 @@ const GameController = (props) => {
             squares: newSquares,
             message: newMessage
         }
-        //newgame.GameInfo.guards = copyGuards
-        // if (newGameInfo.guards[attack-1].hp === 0) {
-        //     setNewGameInfo(newGameInfo)
-        //     setIsFilling(true)
-        // }
+        
         checkActionCounts(newGameInfo,attack)
         
     }
@@ -432,54 +459,36 @@ const GameController = (props) => {
         newGameInfo.guards = newGuards
         newGameInfo.currentState = game.gameInfo.turn === 'red' ? 'fighting_blue' : 'fighting_red'
         newGameInfo.turn = game.gameInfo.turn === 'red' ? 'blue' : 'red'
-        //newGameInfo.message = 'unknown'
         newGameInfo.winner = checkWinner(newGameInfo.guards)
-        //console.log("checkWinner(newGameInfo.guards) : ",checkWinner(newGameInfo.guards))
-        //console.log("newgame.GameInfo : ",newGameInfo)
+        
         if (checkWinner(newGameInfo.guards) !== null) {
             dispatch(actions.resetGuards)
             dispatch(actions.resetSquares)
         }
         if (attack !== null) {
-            if (+newGameInfo.guards[attack-1].hp === 0) {
+            updateGameInfo({
+                ...newGameInfo
+            })
+
+            // if (+newGameInfo.guards[attack-1].hp === 0) {
                 
-                const unplacedGuards = newGameInfo.guards.filter( g => (g.side === newGameInfo.guards[attack-1].side) && !g.isPlaced)
-                // let shouldFill = false
-                // for(let i = 0; i < newGameInfo.guards.length; i++) {
-                //     if ( (newGameInfo.guards[i].side === newGameInfo.guards[attack-1].side) && !newGameInfo.guards[i].isPlaced) {
-                //         shouldFill = true
-                //     }
-                // }
-                if (unplacedGuards.length > 0) {
-                    //console.log('Should Fill')
-                    setNewGameInfo(newGameInfo)
-                    setIsFilling(true)
-                }
-                else {
-                    updateGameInfo({
-                        ...newGameInfo
-                    })
-            
-                    // setTimeout( () => {
-                    //     updateGameInfo({
-                    //         ...newGameInfo,
-                    //         message: 'unknown'
-                    //     })  
-                    // },2000)
-                }
-            }
-            else {
-                updateGameInfo({
-                    ...newGameInfo
-                })
-        
-                // setTimeout( () => {
-                //     updateGameInfo({
-                //         ...newGameInfo,
-                //         message: 'unknown'
-                //     })  
-                // },2000)
-            }
+            //     const unplacedGuards = newGameInfo.guards.filter( g => (g.side === newGameInfo.guards[attack-1].side) && !g.isPlaced)
+
+            //     if (unplacedGuards.length > 0) {
+            //         setNewGameInfo(newGameInfo)
+            //         setIsFilling(true)
+            //     }
+            //     else {
+            //         updateGameInfo({
+            //             ...newGameInfo
+            //         })
+            //     }
+            // }
+            // else {
+            //     updateGameInfo({
+            //         ...newGameInfo
+            //     })
+            // }
         }
         else {
             updateGameInfo({
@@ -487,12 +496,6 @@ const GameController = (props) => {
                 message: 'unknown'
             })
     
-            setTimeout( () => {
-                updateGameInfo({
-                    ...newGameInfo,
-                    message: 'unknown'
-                })  
-            },2000)
         }
         
     }
@@ -531,14 +534,9 @@ const GameController = (props) => {
         const newSquares = [...game.gameInfo.squares].map( s => {
             return {...s,disabled:true}
         })
-        //props.setGuardActived(id,false)
-        //props.setSquaresDisabled(true)
-        //props.setTeamDisabled(props.game.gameInfo.turn,false)
-        //setIsGuardOptionModalShow(false)
-        //setClickedGuard(null)
         dispatch(actions.setWhosMoving(null))
         dispatch(actions.setWhosAttacking(null))
-        //setWhosAttacking(null)
+        dispatch(actions.setWhosAbility(null))
         updateGameInfo({
             ...game.gameInfo,
             guards: newGuards,
@@ -675,19 +673,40 @@ const GameController = (props) => {
         history.push("/")
     }
     
+    const fillingUpdate = async (data) => {
+        let updates = {}
+            updates['/games/' + gameKey] = {...data}
+            try {
+                //setLoading(true)
+                await db.ref().update(updates)
+                //setLoading(false)
+            } catch (error) {
+                console.log("Error Occurred",error.message)
+            }
+    }
+
     const fillUpHandler = (id) => {
         let deadPos = 'NotFound'
         
-        const tempGameInfo = newGameInfo === null ? game.gameInfo : newGameInfo
-        const newGuards = [...tempGameInfo.guards].map( g => {
-            if (g.side === tempGameInfo.guards[id-1].side && +g.hp === 0 && g.pos !== 'unknown') {
+        //const tempGameInfo = newGameInfo === null ? game.gameInfo : newGameInfo
+        const tempGameInfo = {...newGameInfo}
+        const isGuardsDead = [...tempGameInfo.guards].filter( g => g.side === userSide && +g.hp === 0 && g.pos !== 'unknown')
+        const unplacedGuards = [...tempGameInfo.guards].filter( g => (g.side === userSide) && !g.isPlaced)
+
+        let fillingTwice = isGuardsDead.length > 1 && unplacedGuards.length > 0
+        
+        console.log("fillingTwice : ",fillingTwice)
+        for (let i = 0; i < tempGameInfo.guards.length; i++) {
+            let g = tempGameInfo.guards[i]
+            if (g.side === tempGameInfo.guards[id - 1].side && +g.hp === 0 && g.pos !== 'unknown') {
                 deadPos = g.pos
-                return {...g,pos:'unknown'}
+                g.pos = 'unknown'
+                break
             }
-            else return {...g}
-        })
-        console.log(' [deadPos] : ',deadPos)
-        const finalGuards = [...newGuards].map( g => {
+        }
+
+        //console.log("deadPos : ",deadPos)
+        const finalGuards = [...tempGameInfo.guards].map( g => {
             if (g.id === id) return {...g,isPlaced: true, pos: deadPos}
             else return {...g}
         })
@@ -696,14 +715,23 @@ const GameController = (props) => {
             if (s.pos === deadPos) return {...s,unit: id}
             else return {...s}
         })
-
-        updateGameInfo({
-            ...tempGameInfo,
-            squares: newSquares,
-            guards: finalGuards
-        })
-        setIsFilling(false)
-        setNewGameInfo(null)
+        if (fillingTwice) return fillingUpdate({
+                ...tempGameInfo,
+                currentState: game.gameInfo.currentState,
+                turn: game.gameInfo.turn,
+                squares: newSquares,
+                guards: finalGuards
+            })
+        
+        else {
+            console.log("tempGameInfo : ",tempGameInfo)
+            updateGameInfo({
+                ...tempGameInfo,
+                squares: newSquares,
+                guards: finalGuards
+            })
+        }
+        
     }
 
     const setJumpToFighting = () => {
@@ -741,6 +769,215 @@ const GameController = (props) => {
         deleteGame(game.gameInfo.gid)
     }
 
+    const abilityHandler = (name,id) => {
+        if (game.whosAbility !== null) return fightingActionCanceled()
+        switch(name) {
+            case 'Knight':
+                return knightAbilityHandler(id)
+            case 'Archer': 
+                return archerAbilityHandler(id)
+            case 'Wizard': 
+                return wizardAbilityHandler(id)
+            case 'Assassin':
+                return assassinAbilityHandler(id)
+        }
+    }
+
+    const abilityAttackHandler = (id) => {
+        const defender = game.gameInfo.guards[id - 1]
+        const attacker = game.gameInfo.guards[game.whosAbility - 1]
+        switch(attacker.name) {
+            case 'Knight':
+                return 
+                //return knightAbilityAttacking(attacker,defender)
+            case 'Archer': 
+                return archerAbilityAttacking(attacker,defender)
+            case 'Wizard': 
+                return wizardAbilityAttacking(attacker,defender)
+            case 'Assassin':
+                return 
+                //return assassinAbilityAttacking(attacker,defender)
+        }
+    }
+    const wizardAbilityAttacking = (attack,defend) => {
+        const copyGuards = [...game.gameInfo.guards]
+        const attacker = copyGuards[attack.id - 1]
+        const defender = copyGuards[defend.id - 1]
+
+        attacker.ability = true
+
+        let newMessage = {}
+        newMessage[defender.side] = {
+            [defender.name] : {
+                preHp: defender.hp,
+                curHp: defender.hp > attacker.dmg ? defender.hp - attacker.dmg : 0
+            }
+        }
+        defender.prevHp = defender.hp
+        defender.hp = defender.hp > attacker.dmg ? defender.hp - attacker.dmg : 0
+        
+        if (defender.name === 'King' && defender.hp <= 0) {
+            for (let i = 0; i < copyGuards.length; i++) {
+                if (copyGuards[i].side === defender.side) {
+                    copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                    copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                }
+            }
+        }
+        
+        if (withinAttack(attacker.pos, defender.pos, defender.range)) {
+            newMessage[attacker.side] = {
+                [attacker.name] : {
+                    preHp: attacker.hp,
+                    curHp: attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+                }
+            }
+            attacker.prevHp = attacker.hp
+            attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+            if (attacker.name === 'King' && attacker.hp <= 0) {
+                for (let i = 0; i < copyGuards.length; i++) {
+                    if (copyGuards[i].side === attacker.side) {
+                        copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                        copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                    }
+                }
+            }
+        }
+
+        for (let i = 0; i < copyGuards.length; i++) {
+            if (withinAttack(defender.pos,copyGuards[i].pos,1) && i !== (defender.id-1)) {
+                newMessage[copyGuards[i].side] = {
+                    [copyGuards[i].name] : {
+                        preHp: copyGuards[i].hp,
+                        curHp: copyGuards[i].hp > (attacker.dmg/2) ? defender.hp - (attacker.dmg/2) : 0
+                    }
+                }
+                copyGuards[i].preHp = copyGuards[i].hp
+                copyGuards[i].hp = copyGuards[i].hp - (attacker.dmg/2) > 0 ? copyGuards[i].hp - (attacker.dmg/2) : 0
+            }
+        }
+
+        const newGameInfo = {
+            ...game.gameInfo,
+            guards: copyGuards,
+            message: newMessage,
+            currentState: game.gameInfo.currentState === 'fighting_red' ? 'fighting_blue' : 'fighting_red',
+            turn: game.gameInfo.turn === 'red' ? 'blue' : 'red'
+        }
+        dispatch(actions.setWhosAbility(null))
+        checkActionCounts(newGameInfo,attacker.id)
+    }
+
+    const archerAbilityAttacking = (attack,defend) => {
+        
+        const copyGuards = [...game.gameInfo.guards]
+        const attacker = copyGuards[attack.id - 1]
+        const defender = copyGuards[defend.id - 1]
+
+        attacker.ability = true
+
+        let newMessage = {}
+        newMessage[defender.side] = {
+            [defender.name] : {
+                preHp: defender.hp,
+                curHp: defender.hp > attacker.dmg ? defender.hp - (attacker.dmg*1.5) : 0
+            }
+        }
+        defender.prevHp = defender.hp
+        defender.hp = defender.hp > attacker.dmg ? defender.hp - (attacker.dmg*1.5) : 0
+        
+        if (defender.name === 'King' && defender.hp <= 0) {
+            for (let i = 0; i < copyGuards.length; i++) {
+                if (copyGuards[i].side === defender.side) {
+                    copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                    copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                }
+            }
+        }
+        
+        if (withinAttack(attacker.pos, defender.pos, defender.range)) {
+            newMessage[attacker.side] = {
+                [attacker.name] : {
+                    preHp: attacker.hp,
+                    curHp: attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+                }
+            }
+            attacker.prevHp = attacker.hp
+            attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+            if (attacker.name === 'King' && attacker.hp <= 0) {
+                for (let i = 0; i < copyGuards.length; i++) {
+                    if (copyGuards[i].side === attacker.side) {
+                        copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                        copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                    }
+                }
+            }
+        }
+        const newGameInfo = {
+            ...game.gameInfo,
+            guards: copyGuards,
+            message: newMessage,
+            currentState: game.gameInfo.currentState === 'fighting_red' ? 'fighting_blue' : 'fighting_red',
+            turn: game.gameInfo.turn === 'red' ? 'blue' : 'red'
+        }
+        dispatch(actions.setWhosAbility(null))
+        checkActionCounts(newGameInfo,attacker.id)
+    }
+
+    const knightAbilityHandler = (id) => {
+        console.log(`${id} ability clicked`)
+    }
+
+    const archerAbilityHandler = (id) => {
+        //console.log('archer ability handler')
+        dispatch(actions.setWhosAbility(id))
+        const attacker = game.gameInfo.guards[id - 1]
+        const pos = attacker.pos // attacking guard pos
+        const range = attacker.range
+        const newGuards = game.gameInfo.guards.map( g => {
+            if (g.id === +id) {
+                return {...g,actived: true,disabled: true}
+            }
+            else if (g.side === attacker.side) return {...g,disabled: true}
+            else if (g.side !== attacker.side && g.id !== +id) return withinAttack(pos,g.pos,range) 
+                ? {...g,disabled: false} 
+                : {...g,disabled: true}
+            else return {...g,disabled:true}
+            
+        })
+        updateGameInfo({
+            ...game.gameInfo,
+            guards: newGuards
+        })
+    }
+
+    const wizardAbilityHandler = (id) => {
+
+        dispatch(actions.setWhosAbility(id))
+        const attacker = game.gameInfo.guards[id - 1]
+        const pos = attacker.pos // attacking guard pos
+        const range = attacker.range
+        const newGuards = game.gameInfo.guards.map( g => {
+            if (g.id === +id) {
+                return {...g,actived: true,disabled: true}
+            }
+            else if (g.side === attacker.side) return {...g,disabled: true}
+            else if (g.side !== attacker.side && g.id !== +id) return withinAttack(pos,g.pos,range) 
+                ? {...g,disabled: false} 
+                : {...g,disabled: true}
+            else return {...g,disabled:true}
+            
+        })
+        updateGameInfo({
+            ...game.gameInfo,
+            guards: newGuards
+        })
+    }
+
+    const assassinAbilityHandler = (id) => {
+        console.log(`${id} ability clicked`)
+    }
+
     const renderBoard = <BoardControl 
                             userSide={props.location.state.userSide}
                             uploadGameInfo={updateGameInfo}
@@ -765,6 +1002,8 @@ const GameController = (props) => {
                             switchGuardsHandler={switchGuardsHandler}
                             switchGuardsClickedTwiceHandler={switchGuardsClickedTwiceHandler}
                             guardsSwitchingHandler={guardsSwitchingHandler}
+                            abilityHandler={abilityHandler}
+                            abilityAttackHandler={abilityAttackHandler}
                         />
 
     const renderGuards = 

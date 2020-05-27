@@ -1,18 +1,20 @@
 .GameBoard {
     display: flex;
     margin: 20px;
-    align-items: center;
+    
     text-align: center;
 }
 .GameInfoDiv {
     margin: auto;
+    margin-top: 20px;
     padding: 10px;
     text-align: center;
 }
 .BoardControl {
     width: 600px;
     margin: auto;
-    align-items: center;
+    margin-top: 20px;
+    /* align-items: center; */
     text-align: center;
     display: grid;
     padding: 10px;

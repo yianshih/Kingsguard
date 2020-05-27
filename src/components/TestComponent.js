@@ -16,13 +16,6 @@ const TestComponent = () => {
     }
 
     console.log(updateObject)
-    
-    // const test = () => {
-    //     if (true) {
-    //         return <p>A</p>
-    //     }
-
-    // }
 
     
 

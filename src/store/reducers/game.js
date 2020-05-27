@@ -15,10 +15,15 @@ const initialState = {
     isActionCompleted: false,
     whosMoving: null,
     whosAttacking: null,
+    whosAbility: null,
     actionCounts: 0,
     gameInfo: null,
     userSide: null,
     gameIDs: null
+}
+
+const setWhosAbility = (state,action) => {
+    return updateObject(state,{whosAbility: action.id})
 }
 
 const setGameIDs = (state,action) => {
@@ -75,6 +80,7 @@ const reducer = (state=initialState, action) => {
         case actionTypes.resetGame: return resetGame(state,action)
         case actionTypes.setWhosSwitching: return setWhosSwitching(state,action)
         case actionTypes.setGameIDs: return setGameIDs(state,action)
+        case actionTypes.setWhosAbility: return setWhosAbility(state,action)
         default:
             return state
     }

@@ -38,6 +38,7 @@ export {
     setWhosMoving,
     setWhosAttacking,
     setWhosSwitching,
+    setWhosAbility,
     setActionCounts,
     setGameInfo,
     initGameInfo,

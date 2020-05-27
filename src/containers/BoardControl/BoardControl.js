@@ -10,6 +10,7 @@ import Modal from '../../components/UI/Modal/Modal'
 import StrengthenModal from '../../components/UI/StrengthenModal/StrengthenModal'
 import Wavy from '../../components/UI/Wavy/Wavy'
 import FillUpModal from '../../components/UI/FillUpModal/FillUpModal'
+import AbilityModal from '../../components/UI/AbilityModal/AbilityModal'
 import Guard from '../../components/Guard/Guard'
 //import Spinner from '../../components/UI/Spinner/Spinner'
 import GuardsInfo from '../../components/GuardsInfo/GuardsInfo'
@@ -64,25 +65,34 @@ const BoardControl = props => {
             
         }
         else {
-            // user turn
-            if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
-                setTimeout( () => {
-                    setIsWaiting(false)
-                    setIsFilling(true)
-                },1000)
-            }
+            if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
             else {
-                if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
-                else {
-                    if (isWaiting) {
-                        setTimeout( () => {
-                            setIsWaiting(false)
-                        },1000)
-                    }
-                    else return gameProcessHandler()    
+                if (isWaiting) {
+                    setTimeout( () => {
+                        setIsWaiting(false)
+                    },1000)
                 }
-                
+                else return gameProcessHandler()    
             }
+            // user turn
+            // if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
+            //     setTimeout( () => {
+            //         setIsWaiting(false)
+            //         setIsFilling(true)
+            //     },1000)
+            // }
+            // else {
+            //     if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
+            //     else {
+            //         if (isWaiting) {
+            //             setTimeout( () => {
+            //                 setIsWaiting(false)
+            //             },1000)
+            //         }
+            //         else return gameProcessHandler()    
+            //     }
+                
+            // }
         }
     gameProcessHandler()
         
@@ -199,10 +209,9 @@ const BoardControl = props => {
 
 
     const guardsFightingClickHandler = (id) => {
-        console.log('clicked id : ',id)
 
         if (!game.gameInfo.guards[id-1].isPlaced) {
-            console.log('The guard is unplaced')
+            // switch
             if (game.whosAttacking === null) {
                 dispatch(actions.setWhosAttacking(id))
                 props.switchGuardsHandler(id) 
@@ -213,20 +222,21 @@ const BoardControl = props => {
             }
         }
         else {
-            console.log('The guard is placed')
+
             if (game.whosAttacking !== null && game.whosAttacking !== id) {
                 // -- clicking attack target --
                 if (game.gameInfo.guards[game.whosAttacking-1].side === game.gameInfo.guards[id-1].side) {
                     props.guardsSwitchingHandler(id)
                 }
                 else props.guardsAttackingClick(game.whosAttacking,id)
-            } 
+            }
             else if (game.whosMoving !== null || game.whosAttacking !== null) {
                 // -- double clicked --
                 props.fightingActionCanceled()
                 setIsGuardOptionModalShow(false)
             }
             else {
+                if (game.whosAbility !== null) return props.abilityAttackHandler(id)
                 // first click 
                 dispatch(actions.setWhosAttacking(id))
                 props.guardsFightingClickHandler(id)
@@ -306,37 +316,13 @@ const BoardControl = props => {
 
     const fightingHandler = (turn) => {
         //props.checkKingBonus(turn)
-        if ( (game.whosAttacking === null) && (game.whosMoving === null) ) {
+        if ( (game.whosAttacking === null) && (game.whosMoving === null) && (game.whosAbility === null) ) {
             //console.log("set")
-            props.setTeamDisabled(turn,false)
+            return props.setTeamDisabled(turn,false)
         }
-        else {
-            // console.log("game.gameInfo.whosAttacking : ",game.whosAttacking)
-            // console.log("game.gameInfo.whosMoving : ",game.whosMoving)
-            // console.log("not set")
-        }
+        
     }
-    // const placingGuards = game.gameInfo.turn === props.userSide ? localGuards :  game.gameInfo.guards
-    //const placingGuards =  game.gameInfo.guards
-    // const renderGuards = game.gameInfo.currentState.split("_")[0] === 'placing' ?
-    //     <div className={styles.GuardsBoard}>
-    //         { game.gameInfo.guards.map( g => 
-    //         g.isPlaced || ( game.gameInfo ? g.side !== (game.gameInfo.red === user.email ? 'red' : 'blue') : false)
-    //         ? null 
-    //         :<Guard
-    //             id={g.id}
-    //             key={g.id}
-    //             side={g.side}
-    //             clicked={() => guardsClickedHandler(g.id)} 
-    //             pos={g.pos}
-    //             name={g.name} 
-    //             disabled={g.disabled}
-    //             actived={g.actived}
-    //         />
-    //         )}
-    //     </div>
-    //     : null
-
+    
     const fillUpHandler = (id) => {
         let deadPos = null
         const newGuards = [...game.gameInfo.guards].map( g => {
@@ -382,12 +368,6 @@ const BoardControl = props => {
         />
         ):null}
     </div>
-    // let shouldrenderGuards = false
-    // for (let i = 0;i < game.gameInfo.guards.filter( g => g.side === props.userSide).length; i++) {
-
-    // }
-
-    
 
     const renderGuardsList = [...game.gameInfo.guards].filter( g => (g.side === props.userSide) && !g.isPlaced )
     const renderGuards = 
@@ -407,29 +387,10 @@ const BoardControl = props => {
                 )}
          </div>
         : null
-    // const renderGuards = 
-    //     <div className={styles.GuardsBoard}>
-    //         { game.gameInfo.guards.map( g => 
-    //         g.isPlaced || ( game.gameInfo ? g.side !== (game.gameInfo.red === user.email ? 'red' : 'blue') : false)
-    //         ? null 
-    //         :<Guard
-    //             id={g.id}
-    //             key={g.id}
-    //             side={g.side}
-    //             clicked={() => guardsClickedHandler(g.id)} 
-    //             pos={g.pos}
-    //             name={g.name} 
-    //             disabled={g.disabled}
-    //             actived={g.actived}
-    //         />
-    //         )}
-    //     </div>
 
     let renderGuardsBoard = null
     let renderSquaresBoard = null
     if (game.gameInfo.turn === game.userSide) {
-        // renderGuardsBoard = localGuards
-        // renderSquaresBoard = localSquares
         renderGuardsBoard = game.gameInfo.guards
         renderSquaresBoard = game.gameInfo.squares
     }
@@ -437,37 +398,18 @@ const BoardControl = props => {
         renderGuardsBoard = game.gameInfo.guards
         renderSquaresBoard = game.gameInfo.squares
     }
-    
 
     const settingMessage = () => {
         let result = <div style={{fontSize:'20px',color:'white'}}>
                 <Wavy>Waiting...</Wavy>
-                {/* <h3 style={{margin:"5px"}}>Waiting Opponent...</h3> */}
-                {/* <Link to="/">
-                    <Button btnType="Danger" clicked={leaveHandler}>Leave</Button>
-                </Link> */}
             </div>
         return result
     }
     const renderMessage = settingMessage()
 
-    // const leaveing = () => {
-    //     if (game.gameInfo.currentState === 'userLeft') {
-    //         dispatch(actions.resetGuards())
-    //         dispatch(actions.resetSquares())
-    //         dispatch(actions.resetGame())
-    //         return <Redirect to='/' />
-    //     }
-    // }
     
     return(
-        <div>
-            {/* <NavigationItems /> */}
-            {/* <div className={styles.LeaveDiv}>
-                <Link to="/">
-                    <Button btnType="Danger" clicked={leaveHandler}>Leave</Button>
-                </Link>
-            </div> */}
+        <React.Fragment>
             <FillUpModal show={isFilling} modalClosed={null}>
                 <h3>One of your unit is dead,please choice an unit to fill </h3>
                 {renderFillUpGuards}
@@ -490,10 +432,6 @@ const BoardControl = props => {
             </Modal>
             <Modal show={game.gameInfo ? game.gameInfo.winner !== "unknown" ? true : false : false} modalClosed={null}>
                 <h1>Winner : {game.gameInfo ? game.gameInfo.winner !== "unknown" ? game.gameInfo.winner : null : false}</h1>
-                {/* {props.userSide === 'red' 
-                ? <Button btnType="Success" clicked={props.playAgainHandler}>Play Again</Button> 
-                : null
-                } */}
             </Modal>
             <GuardOptionModal show={isGuardOptionModalShow} modalClosed={closeModalHandler}>
                 <Button btnType='Success' clicked={guardsFightingMovingHandler}>Move</Button>
@@ -502,15 +440,6 @@ const BoardControl = props => {
                 <p></p>
                 <Button btnType='Danger' clicked={closeModalHandler}>Close</Button>
             </GuardOptionModal>
-            {/* {props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'
-            ?
-            <div className={styles.GameStart}>
-                <Button btnType="Success" clicked={gameStartHandler} disabled={!(game.gameInfo.currentState === 'blueJoined')}>Game Start</Button>
-                <Button btnType="Info" clicked={jumpToFighting} disabled={game.gameInfo.currentState.split("_")[0] === 'fighting'}> Jump To Fighting</Button>
-            </div>
-             
-            : null
-            } */}
             {props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'}
             
             <Modal show={props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} modalClosed={null}>
@@ -520,13 +449,16 @@ const BoardControl = props => {
                 </div>
             </Modal>
             
-            
+            <AbilityModal show={game.whosAbility !== null} modalClosed={null}>
+                <Wavy>Choose your target</Wavy>
+                <Button clicked={props.fightingActionCanceled} btnType="Danger">Cancel</Button>
+            </AbilityModal>
             
             <div className={styles.GameBoard}>
                 <div className={styles.GameInfoDiv}>
                     {game.gameInfo.currentState.split("_")[0] === 'fighting'
-                    ? <GuardsInfo guards={game.gameInfo.guards} side="red"/> 
-                    : props.userSide === 'red' ? <GuardsInfo guards={game.gameInfo.guards} side="red"/>
+                    ? <GuardsInfo abilityHandler={props.abilityHandler} guards={game.gameInfo.guards} userSide={props.userSide} side="red"/> 
+                    : props.userSide === 'red' ? <GuardsInfo guards={game.gameInfo.guards} userSide={props.userSide} side="red"/>
                     : null}
                 </div>
                 <div className={styles.BoardControl}>
@@ -545,13 +477,13 @@ const BoardControl = props => {
                 </div>
                 <div className={styles.GameInfoDiv}>
                     {game.gameInfo.currentState.split("_")[0] === 'fighting'
-                    ? <GuardsInfo guards={game.gameInfo.guards} side="blue"/> 
-                    : props.userSide === 'blue' ? <GuardsInfo guards={game.gameInfo.guards} side="blue"/>
+                    ? <GuardsInfo abilityHandler={props.abilityHandler} guards={game.gameInfo.guards} userSide={props.userSide} side="blue"/> 
+                    : props.userSide === 'blue' ? <GuardsInfo guards={game.gameInfo.guards} userSide={props.userSide} side="blue"/>
                     : null}
                 </div>
             </div>
             
-        </div>
+        </React.Fragment>
         
     )
 

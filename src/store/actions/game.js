@@ -102,3 +102,10 @@ export const setWhosSwitching = (id) => {
         id: id
     }
 }
+
+export const setWhosAbility = (id) => {
+    return {
+        type: actionTypes.setWhosAbility,
+        id: id
+    }
+}
