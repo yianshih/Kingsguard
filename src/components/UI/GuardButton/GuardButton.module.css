@@ -92,6 +92,7 @@
     background-color:white;
 }
 .red:disabled {
+    background-color: white;
     opacity: 0.7;
     border: 4px outset red;
     cursor: not-allowed;
@@ -102,6 +103,7 @@
     cursor: not-allowed;
 } */
 .blue:disabled {
+    background-color: white;
     border: 4px outset blue;
     opacity: 0.7;
     cursor: not-allowed;

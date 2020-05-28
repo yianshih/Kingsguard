@@ -56,7 +56,6 @@ const BoardControl = props => {
 
         const isGuardsDead = [...game.gameInfo.guards].filter( g => g.side === props.userSide && +g.hp === 0 && g.pos !== 'unknown')
         const unplacedGuards = [...game.gameInfo.guards].filter( g => (g.side === props.userSide) && !g.isPlaced)
-
         if (game.gameInfo.turn !== props.userSide) {
             //waiting
             //setIsWaiting(true)
@@ -65,6 +64,15 @@ const BoardControl = props => {
             
         }
         else {
+            if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
+                setIsWaiting(false)
+                props.updateGameInfo({
+                    ...game.gameInfo
+                })
+                // return setTimeout( () => { 
+                //     setIsFilling(true)
+                // },500)
+            }
             if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
             else {
                 if (isWaiting) {
@@ -119,7 +127,7 @@ const BoardControl = props => {
                     copyGameInfo.turn = 'red'
                     copyGameInfo.currentState = 'placing_red'
                 }
-                return props.uploadGameInfo(copyGameInfo)
+                return props.updateGameInfo(copyGameInfo)
             case 'placing':
                 if (actionTurn === 'red') {
                     copyGameInfo.turn = 'blue'
@@ -134,7 +142,7 @@ const BoardControl = props => {
                     if (placementFinish) copyGameInfo.currentState = 'fighting_red'
                     else copyGameInfo.currentState = 'placing_red' 
                 }
-                return props.uploadGameInfo(copyGameInfo)
+                return props.updateGameInfo(copyGameInfo)
 
             case 'fighting':
                 if (actionTurn === 'red') {
@@ -145,7 +153,7 @@ const BoardControl = props => {
                     copyGameInfo.turn = 'red'
                     copyGameInfo.currentState = 'fighting_red'
                 }
-                return props.uploadGameInfo(copyGameInfo)
+                return props.updateGameInfo(copyGameInfo)
             default:
                 console.log("Unknown Case")
         }
@@ -184,7 +192,7 @@ const BoardControl = props => {
             turn: 'red',
             currentState:'strengthening_red'
         }
-        props.uploadGameInfo(copyGameInfo)
+        props.updateGameInfo(copyGameInfo)
     }
 
     const closeModalHandler = () => {
@@ -317,8 +325,8 @@ const BoardControl = props => {
     const fightingHandler = (turn) => {
         //props.checkKingBonus(turn)
         if ( (game.whosAttacking === null) && (game.whosMoving === null) && (game.whosAbility === null) ) {
-            //console.log("set")
-            return props.setTeamDisabled(turn,false)
+            
+            //return props.setTeamDisabled(turn,false)
         }
         
     }
@@ -343,7 +351,7 @@ const BoardControl = props => {
             else return {...s}
         })
 
-        props.uploadGameInfo({
+        props.updateGameInfo({
             ...game.gameInfo,
             squares: newSquares,
             guards: finalGuards

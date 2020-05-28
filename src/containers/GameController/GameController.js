@@ -26,7 +26,7 @@ const GameController = (props) => {
     const squares = useSelector(state => state.squares)
     const [user] = useState(auth().currentUser)
     const [newGameInfo,setNewGameInfo] = useState(null)
-    const [actionFinish,setActionFinish] = useState(false)
+    
 
     const dispatch = useDispatch()
 
@@ -39,7 +39,7 @@ const GameController = (props) => {
 
 
     const updateGameInfo = async (data) => {
-        //console.log('Uploading')
+        console.log('Uploading')
         //console.log('Uploading',data)
         
         let newData = {...data}
@@ -70,7 +70,7 @@ const GameController = (props) => {
             setNewGameInfo(null)
         }
         
-        if ( (newData.currentState.split('_')[0] === 'fighting') && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState.split("_")[0] === 'blueJoined') ) ) {
+        if ( (newData.currentState.split('_')[0] === 'fighting') && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState === 'blueJoined') ) ) {
             if (checkKingBonus(newData.turn, newData.guards)) {
                 console.log('King Bonus applied')
                 const newGuards = [...newData.guards].map( g => {
@@ -102,7 +102,24 @@ const GameController = (props) => {
                     guards: newGuards
                 }
             }
+
+
         }
+        //console.log(newData)
+        if (newData.currentState.split("_")[0] === 'fighting' && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState === 'blueJoined') ) ) {
+            //switch turn
+            console.log('here')
+            const finalGuards = [...newData.guards].map( g => {
+                if (g.side === newData.turn) {
+                    return {...g, disabled: false}
+                }
+                else {
+                    return {...g,disabled: true}
+                }
+            })
+            newData.guards = finalGuards
+        }
+        
         
         let updates = {}
         updates['/games/' + gameKey] = {...newData}
@@ -302,13 +319,23 @@ const GameController = (props) => {
     const withinAttack = (g_pos,target_pos,range) => {   
         const row = ['A','B','C','D','E','F','G','H']
         const g_rowIndex = row.findIndex( (item) => item === g_pos[0])
-        const s_rowIndex = row.findIndex( (item) => item === target_pos[0])
-        const rowDis = Math.abs(g_rowIndex - s_rowIndex)
+        const t_rowIndex = row.findIndex( (item) => item === target_pos[0])
+        const rowDis = Math.abs(g_rowIndex - t_rowIndex)
         const noDis = Math.abs(g_pos[1] - target_pos[1])
+        let attackable = false
         if (range > 1) {
-            return rowDis === range || noDis === range
+            if (noDis === range) {
+                attackable = rowDis <= range
+            }
+            else if (rowDis === range) {
+                attackable = noDis <= range
+            }
+            
         }
-        else return rowDis <= range && noDis <= range
+        else {
+            attackable = rowDis <= range && noDis <= range
+        }
+        return attackable
     }
 
     const guardsFightingClickHandler = (clickedId) => {
@@ -980,7 +1007,7 @@ const GameController = (props) => {
 
     const renderBoard = <BoardControl 
                             userSide={props.location.state.userSide}
-                            uploadGameInfo={updateGameInfo}
+                            updateGameInfo={updateGameInfo}
                             actionCompleted={actionCompleted}
                             guardsPlacingClick={guardsPlacingClick}
                             guardsPlacingClickTwice={guardsPlacingClickTwice}
