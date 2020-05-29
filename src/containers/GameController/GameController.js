@@ -496,29 +496,27 @@ const GameController = (props) => {
         }
 
         if (withinAttack(attacker.pos, defender.pos, defender.range)) {
-            newAttacked.push(attacker.id)
-            // newMessage[attacker.side] = {
-            //     [attacker.name] : {
-            //         preHp: attacker.hp,
-            //         curHp: attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
-            //     }
-            // }
-            attacker.prevHp = attacker.hp
-            attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
-            if (attacker.name === 'King' && attacker.hp <= 0) {
-                for (let i = 0; i < copyGuards.length; i++) {
-                    if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
-                        newAttacked.push(copyGuards[i].id)
-                        copyGuards[i].prevHp = copyGuards[i].hp
-                        copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
-                        copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+            if (!attacker.isShelled) {
+                newAttacked.push(attacker.id)
+                attacker.prevHp = attacker.hp
+                attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+                if (attacker.name === 'King' && attacker.hp <= 0) {
+                    for (let i = 0; i < copyGuards.length; i++) {
+                        if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
+                            newAttacked.push(copyGuards[i].id)
+                            copyGuards[i].prevHp = copyGuards[i].hp
+                            copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                            copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                        }
                     }
                 }
+                
             }
+            if (attacker.isShelled) copyGuards[attacker.id - 1].isShelled = false
         }
 
         if (defender.isShelled) copyGuards[defender.id - 1].isShelled = false
-        
+
         const newGameInfo = {
             ...game.gameInfo,
             guards: copyGuards,
@@ -947,19 +945,22 @@ const GameController = (props) => {
         
         
         if (withinAttack(attacker.pos, defender.pos, defender.range)) {
-            newAttacked.push(attacker.id)
-            attacker.prevHp = attacker.hp
-            attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
-            if (attacker.name === 'King' && attacker.hp <= 0) {
-                for (let i = 0; i < copyGuards.length; i++) {
-                    if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
-                        newAttacked.push(copyGuards[i].id)
-                        copyGuards[i].prevHp = copyGuards[i].hp
-                        copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
-                        copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+            if (!attacker.isShelled) {
+                newAttacked.push(attacker.id)
+                attacker.prevHp = attacker.hp
+                attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+                if (attacker.name === 'King' && attacker.hp <= 0) {
+                    for (let i = 0; i < copyGuards.length; i++) {
+                        if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
+                            newAttacked.push(copyGuards[i].id)
+                            copyGuards[i].prevHp = copyGuards[i].hp
+                            copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                            copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                        }
                     }
                 }
             }
+            if (attacker.isShelled) copyGuards[attacker.id - 1].isShelled = false
         }
 
         for (let i = 0; i < copyGuards.length; i++) {
@@ -970,7 +971,7 @@ const GameController = (props) => {
                     copyGuards[i].preHp = copyGuards[i].hp
                     copyGuards[i].hp = copyGuards[i].hp - (attacker.dmg/2) > 0 ? copyGuards[i].hp - (attacker.dmg/2) : 0
                 }
-                
+                if (copyGuards[i].isShelled) copyGuards[i].isShelled = false
             }
         }
 
