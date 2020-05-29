@@ -13,7 +13,7 @@
 .BoardControl {
     width: 600px;
     margin: auto;
-    margin-top: 20px;
+    margin-top: 10%;
     /* align-items: center; */
     text-align: center;
     display: grid;

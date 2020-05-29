@@ -18,8 +18,9 @@ const Guard = props => {
       side={props.side}
       actived={props.actived} 
       disabled={props.disabled} 
-      clicked = {props.clicked} 
+      clicked={props.clicked} 
       className={styles.Guard}
+      isShelled={props.isShelled}
       >{props.name}
     </GuardButton> 
   )

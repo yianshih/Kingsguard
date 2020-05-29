@@ -14,7 +14,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: false
+        ability: false,
+        isShelled: false
     },
     Archer: {
         name: 'Archer',
@@ -28,7 +29,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: false
+        ability: false,
+        isShelled: false
     },
     Wizard: {
         name: 'Wizard',
@@ -42,7 +44,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: false
+        ability: false,
+        isShelled: false
     },
     King: {
         name: 'King',
@@ -56,7 +59,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: 'none'
+        ability: 'none',
+        isShelled: false
     },
     Assassin: {
         name: 'Assassin',
@@ -70,7 +74,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: false
+        ability: false,
+        isShelled: false
     },
     Angel: {
         name: 'Angel',
@@ -84,7 +89,8 @@ const guardsInit = {
         actived: false,
         disabled: true,
         pos: 'unknown',
-        ability: 'none'
+        ability: 'none',
+        isShelled: false
     }
 
 }

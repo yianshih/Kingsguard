@@ -52,57 +52,68 @@ const BoardControl = props => {
         }
     }
 
+
+    // useEffect( () => {
+    //     if (game.gameInfo.message !== 'unknown' && typeof game.gameInfo.message !== 'undefined') {
+    //         console.log('reset message')
+    //         return setTimeout(() => {
+    //             props.updateGameInfo({
+    //                 ...game.gameInfo,
+    //                 message:'unknown'
+    //             })
+    //         },3000) 
+    //     }
+    //     else {
+    //         console.log('do not reset message')   
+    //     }
+    // },[])
+
     useEffect( () => {
 
         const isGuardsDead = [...game.gameInfo.guards].filter( g => g.side === props.userSide && +g.hp === 0 && g.pos !== 'unknown')
         const unplacedGuards = [...game.gameInfo.guards].filter( g => (g.side === props.userSide) && !g.isPlaced)
+        if (game.gameInfo.currentState === 'userLeft') alert('User left')
         if (game.gameInfo.turn !== props.userSide) {
             //waiting
             //setIsWaiting(true)
             if (game.gameInfo.winner !== "unknown") return setIsWaiting(false)
-            else return setIsWaiting(true)
-            
+            else {
+                setIsWaiting(true)
+            }
         }
         else {
-            if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
+            const shouldBonus = props.checkAngelBonus(props.userSide,game.gameInfo.guards) || props.checkKingBonus(props.userSide,game.gameInfo.guards)
+             
+            if (game.gameInfo.attacked !== 'unknown') {
+                //setIsWaiting(false)
+                setTimeout( () => {
+                    props.updateGameInfo({
+                        ...game.gameInfo,
+                        attacked: 'unknown'
+                    })
+                },2000)
+            }
+            else if (!game.gameInfo.bonus && shouldBonus) {
+                console.log("applying bonus")
+                props.bonusUpdate(props.userSide)
+            }
+
+            
+            else if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
                 setIsWaiting(false)
                 props.updateGameInfo({
                     ...game.gameInfo
                 })
-                // return setTimeout( () => { 
-                //     setIsFilling(true)
-                // },500)
             }
-            if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
+
+            else if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
             else {
-                if (isWaiting) {
-                    setTimeout( () => {
-                        setIsWaiting(false)
-                    },1000)
-                }
-                else return gameProcessHandler()    
+                setIsWaiting(false)
+                gameProcessHandler()
             }
-            // user turn
-            // if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
-            //     setTimeout( () => {
-            //         setIsWaiting(false)
-            //         setIsFilling(true)
-            //     },1000)
-            // }
-            // else {
-            //     if (game.gameInfo.winner !== "unknown") setIsWaiting(false)
-            //     else {
-            //         if (isWaiting) {
-            //             setTimeout( () => {
-            //                 setIsWaiting(false)
-            //             },1000)
-            //         }
-            //         else return gameProcessHandler()    
-            //     }
-                
-            // }
+
         }
-    gameProcessHandler()
+        
         
     },[game.gameInfo])
 
@@ -299,7 +310,7 @@ const BoardControl = props => {
             case 'placing':
                 return guardsPlacingClickHandler(id)
             case 'fighting':
-                return  guardsFightingClickHandler(id)
+                return guardsFightingClickHandler(id)
             default:
                 console.log('Unknown Stage')
         }

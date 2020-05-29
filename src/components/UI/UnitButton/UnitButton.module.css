@@ -53,7 +53,10 @@
     animation: shake 1.5s; 
     animation-iteration-count: infinite; 
 }
-
+.Actived {
+    animation: shake 1.5s; 
+    animation-iteration-count: infinite; 
+}
 .Shaking {
     background-color: #8e8e8e;
 }

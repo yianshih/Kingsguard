@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Wavy from './UI/Wavy/Wavy'
+import AttackEffect from './UI/AttackEffect/AttackEffect'
 const TestComponent = () => {
     const myObject = {
         id: 1,
@@ -19,7 +20,10 @@ const TestComponent = () => {
 
     
 
-    return <div style={{margin:'300px'}}><Wavy>Loading...</Wavy></div>
+    return <div style={{
+                width:'50px',
+                height:'50px'
+            }}><AttackEffect>123</AttackEffect></div>
     
     
 

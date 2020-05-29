@@ -25,7 +25,8 @@ const Board = props => {
                     pos={guards[s.unit - 1].pos}
                     name={guards[s.unit - 1].name} 
                     disabled={guards[s.unit - 1].disabled}
-                    actived={guards[s.unit - 1].actived}/>
+                    actived={guards[s.unit - 1].actived}
+                    isShelled={guards[s.unit - 1].isShelled}/>
                 :<Square
                     clicked={() => props.clicked(s.pos)} 
                     key={s.pos}

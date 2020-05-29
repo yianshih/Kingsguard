@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './AbilityModal.module.css'
-import Backdrop from '../Backdrop/Backdrop'
+//import Backdrop from '../Backdrop/Backdrop'
 
 const AbilityModal = props => {
     return (

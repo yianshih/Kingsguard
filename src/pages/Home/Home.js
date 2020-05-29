@@ -82,7 +82,8 @@ const Home = () => {
             updateState: false,
             updater: 'unknown',
             winner: 'unknown',
-            message: 'unknown'
+            attacked: 'unknown',
+            bonus: false,
         }
         dispatch(actions.setUserSide('red'))
         writeUserData(newKey,content)
