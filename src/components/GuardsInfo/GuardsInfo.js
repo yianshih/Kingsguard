@@ -3,12 +3,16 @@ import React from 'react'
 import styles from './GuardsInfo.module.css'
 import { useSelector } from 'react-redux'
 import Bar from '../UI/Bar/Bar'
-import Button from '../UI/Button/Button'
+//import Button from '../UI/Button/Button'
+import Button from '@material-ui/core/Button'
+import GpsFixedRoundedIcon from '@material-ui/icons/GpsFixedRounded'
+import IconButton from '@material-ui/core/IconButton'
+
 
 const GuardsInfo = React.memo(props => {
 
     const game = useSelector(state => state.game)
-    
+
     const renderGuard = (id,side,name,fullHp,hp,dmg,ability) => (
         <div className={[styles.Guard].join(' ')} key={id}>
             <img alt="" className={[styles.UnitImg, styles[side]].join(' ')} src={require(`../../assets/images/icon/${name}.png`)}></img>
@@ -20,17 +24,42 @@ const GuardsInfo = React.memo(props => {
             <div className={styles.Attack}>
                 <img alt="" src={require(`../../assets/images/icon/attack.png`)}></img>
                 <strong>{dmg}</strong>
+                {ability !== 'none'
+                ? game.gameInfo.currentState.split("_")[0] === 'fighting'
+                    ?side === props.userSide 
+                        ?<IconButton disabled={ability} color="primary" onClick={() => props.abilityHandler(name,id)}>
+                            <GpsFixedRoundedIcon />
+                        </IconButton>
+                        :<IconButton disabled={ability} color="primary" onClick={null}>
+                            <GpsFixedRoundedIcon />
+                        </IconButton>
+                    :null
+                : null}
+
+                {/* {ability !== 'none'
+                ? game.gameInfo.currentState.split("_")[0] === 'fighting'
+                    ?side === props.userSide 
+                        ?<div className={styles.Ability}>
+                            <IconButton disabled={ability} color="primary" onClick={() => props.abilityHandler(name,id)}>
+                                <GpsFixedRoundedIcon />
+                            </IconButton>
+                        </div>
+                        :null
+                    :null
+                : null} */}
             </div>
-            {ability !== 'none'
+            {/* {ability !== 'none'
             ? game.gameInfo.currentState.split("_")[0] === 'fighting'
                 ?side === props.userSide 
                     ?<div className={styles.Ability}>
                         <p>Ability</p>
-                        <Button btnType="Success" disabled={ability} clicked={() => props.abilityHandler(name,id)}>Ability</Button>
+                        <IconButton disabled={ability} color="primary" onClick={() => props.abilityHandler(name,id)}>
+                            <GpsFixedRoundedIcon />
+                        </IconButton>
                     </div>
                     :null
                 :null
-            : null}
+            : null} */}
             
         </div>
     )

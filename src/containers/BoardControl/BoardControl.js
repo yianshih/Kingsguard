@@ -436,7 +436,7 @@ const BoardControl = props => {
             </FillUpModal>
             
             {firebaseError ? firebaseError : null}
-            <Modal styled={{backgroundColor:'#000000b5'}} show={game.gameInfo.currentState === 'waitingBlue'} modalClosed={null}>
+            <Modal styled={{backgroundColor:'#000000b5',overflow: 'hidden'}} show={game.gameInfo.currentState === 'waitingBlue'} modalClosed={null}>
                 <Wavy styled={{color:'white'}}>Waiting Blue ...</Wavy>
             </Modal>
             <StrengthenModal backdropStyle={{backgroundColor:'#0000004d'}} show={isStrengthModalShow} modalClosed={null}>
@@ -447,10 +447,10 @@ const BoardControl = props => {
                     side={game.gameInfo ? game.gameInfo.turn : null}
                 />
             </StrengthenModal>
-            <Modal styled={{backgroundColor:'#000000b5'}} show={isWaiting} modalClosed={null}>
+            <Modal styled={{backgroundColor:'#000000b5',overflow: 'hidden'}} show={isWaiting} modalClosed={null}>
                 {renderMessage}
             </Modal>
-            <Modal show={game.gameInfo ? game.gameInfo.winner !== "unknown" ? true : false : false} modalClosed={null}>
+            <Modal styled={{backgroundColor:'white',overflow: 'hidden'}} show={game.gameInfo ? game.gameInfo.winner !== "unknown" ? true : false : false} modalClosed={null}>
                 <h1>Winner : {game.gameInfo ? game.gameInfo.winner !== "unknown" ? game.gameInfo.winner : null : false}</h1>
             </Modal>
             {/* <GuardOptionModal show={isGuardOptionModalShow} modalClosed={closeModalHandler}>
@@ -460,7 +460,7 @@ const BoardControl = props => {
             </GuardOptionModal> */}
             {/* {props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} */}
             
-            <Modal show={props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} modalClosed={null}>
+            <Modal styled={{backgroundColor:'white',overflow: 'hidden'}} show={props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} modalClosed={null}>
                 <div className={styles.GameStart}>
                     <Button
                         variant="outlined"
@@ -479,11 +479,11 @@ const BoardControl = props => {
                     <Button btnType="Info" clicked={jumpToFighting} disabled={game.gameInfo.currentState.split("_")[0] === 'fighting'}> Jump To Fighting</Button> */}
                 </div>
             </Modal>
-            <AbilityModal show={game.gameInfo.currentState.split('_')[0] === 'placing' && game.gameInfo.turn === props.userSide} modalClosed={null}>
+            <AbilityModal show={game.gameInfo.currentState.split('_')[0] === 'placing' && game.gameInfo.turn === props.userSide && !isWaiting} modalClosed={null}>
                 <Wavy>Placing your units</Wavy>
             </AbilityModal>
 
-            <AbilityModal show={game.whosAbility !== null} modalClosed={null}>
+            <AbilityModal styled={{backgroundColor:'#ffffff00',overflow: 'hidden'}} show={game.whosAbility !== null} modalClosed={null}>
                 <Wavy>Choose your target</Wavy>
                 <Button
                     variant="outlined"
