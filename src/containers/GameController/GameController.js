@@ -1258,7 +1258,7 @@ const GameController = (props) => {
                             <Paper style={{padding:'10px'}} elevation={5}><strong>{user.email}</strong></Paper>
                         </Grid>
                         <Grid item>
-                            <Link underline='none' to="/">
+                            <Link underline='none' href="/">
                                 <Button
                                     variant="contained"
                                     color="secondary"

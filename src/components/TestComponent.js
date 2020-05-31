@@ -1,9 +1,6 @@
 import React from 'react'
-
-import Wavy from './UI/Wavy/Wavy'
-import AttackEffect from './UI/AttackEffect/AttackEffect'
-import SigninForm from './UI/MaterialUI/SigninForm/SigninForm'
 import Table from './UI/GamesTable/GamesTable'
+import HomeAppBar from './UI/HomeAppBar/HomeAppBar'
 const TestComponent = () => {
 
     const myObject = {
@@ -23,7 +20,7 @@ const TestComponent = () => {
 
     
 
-    return <Table />
+    return <HomeAppBar />
     
     
 

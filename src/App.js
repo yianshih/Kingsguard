@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import Login from './pages/Login/Login'
 import SignUp from './pages/Signup/Signup'
 import Home from './pages/Home/Home'
+import Instruction from './pages/Instruction/Instruction'
 import GameController from './containers/GameController/GameController'
+import GuardsInfo from './pages/GuardsInfo/GuardsInfo'
 import { auth } from "./services/firebase";
 import { Route, Switch } from 'react-router-dom'
 import TestComponent from './components/TestComponent'
@@ -33,8 +35,9 @@ const App = props => {
   (
     <Switch>
       <Route path="/Home" component={Home} />
+      <Route path="/instruction" component={Instruction} />
+      <Route path="/guardsInfo" component={GuardsInfo} />
       <Route path="/game" component={GameController} />
-      <Route path="/gameController" component={GameController} />
       <Route path="/Test" component={TestComponent} />
       <Route path="/" component={Home} />
       {/* <Route path="/Board" component={BoardControl} /> */}

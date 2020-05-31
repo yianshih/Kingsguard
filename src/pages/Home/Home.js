@@ -7,16 +7,12 @@ import { db, auth } from '../../services/firebase'
 import { Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
+
 import * as actions from '../../store/actions/index'
-//import Spinner from '../../components/UI/Spinner/Spinner'
 import GamesTable from '../../components/UI/GamesTable/GamesTable'
 import { logout } from '../../helpers/auth' 
 import { useHistory } from 'react-router-dom'
-//import styles from './Home.module.css'
-//import Modal from '@material-ui/core/Modal'
-//import Backdrop from '@material-ui/core/Backdrop'
-//import Fade from '@material-ui/core/Fade'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { green } from '@material-ui/core/colors'
 
 import Container from '@material-ui/core/Container'
@@ -26,11 +22,17 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
-
-//import IconButton from '@material-ui/core/IconButton'
-//import MenuIcon from '@material-ui/icons/Menu'
+import Drawer from '@material-ui/core/Drawer'
+import IconButton from '@material-ui/core/IconButton'
+import MenuIcon from '@material-ui/icons/Menu'
+import Divider from '@material-ui/core/Divider'
+import clsx from 'clsx'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import HomeAppBar from '../../components/UI/HomeAppBar/HomeAppBar'
 //import Slide from '@material-ui/core/Slide'
 //import useScrollTrigger from '@material-ui/core/useScrollTrigger'
+
 
 
 const Home = _ => {
@@ -53,6 +55,9 @@ const Home = _ => {
     const [newKey, setNewKey] = useState(null)
     //const [games, setGames] = useState(null)
     const [createError,setCreateError] = useState(null)
+    
+    const [open, setOpen] = React.useState(false);
+    const theme = useTheme();
     const dispatch = useDispatch()
     const [inputConfig, setInputConfig] = useState({
         value: '',
@@ -62,6 +67,7 @@ const Home = _ => {
         touched: false
 
     })
+    const drawerWidth = 240
     const useStyles = makeStyles((theme) => ({
         paper: {
           marginTop: theme.spacing(8),
@@ -88,6 +94,26 @@ const Home = _ => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+        },
+        menuButton: {
+            marginRight: theme.spacing(2),
+        },
+        hide: {
+            display: 'none',
+        },
+        appBar: {
+            transition: theme.transitions.create(['margin', 'width'], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+          },
+        appBarShift: {
+            width: `calc(100% - ${drawerWidth}px)`,
+            marginLeft: drawerWidth,
+            transition: theme.transitions.create(['margin', 'width'], {
+              easing: theme.transitions.easing.easeOut,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
         },
       }))
   
@@ -237,13 +263,7 @@ const Home = _ => {
         setGameInput(e.target.value)
         setJoinError(null)
     }
-    // const optionStyle = {
-    //     margin:'20px',
-    //     width: '180px',
-    //     height: '120px',
-    //     fontSize:'25px',
-    //     borderRadius: '50px'
-    // }
+
     const render = (
         isCreated ? <Redirect to={{ 
             pathname: '/game', 
@@ -284,69 +304,34 @@ const Home = _ => {
             </Grid>
         </Grid></div>
     )
-    // const tableContent = game.gameIDs !== null 
-    // ? Object.keys(game.gameIDs).reverse().map( (gameID,index) => {
-    //     if (index < 10)
-    //         return (
-    //             <tbody key={gameID}>
-    //                 <tr>
-    //                     <td style={{
-    //                         color:'red',
-    //                         fontSize:'25px'}}>
-    //                         {gameID}
-    //                     </td>
-    //                     <td>
-    //                         {game.gameIDs[gameID].creater}
-    //                     </td>
-    //                     <td>
-    //                         {game.gameIDs[gameID].currentState === 'waitingBlue' 
-    //                         ? <Button
-    //                             fullWidth
-    //                             variant="contained"
-    //                             color="primary"
-    //                             className={classes.submit}
-    //                             onClick={() => clickGameHandler(gameID)}>
-    //                             Join
-    //                         </Button>
-    //                     // <Button btnType="Info" clicked={ _ => clickGameHandler(gameID)} >Join</Button>
-    //                         : <p style={{color:'red'}}>Playing</p>}
-    //                     </td>
-    //                 </tr>
-    //             </tbody>
-    //         )
-    //     else return null
-    //     })
-    // : null
-
-    // const renderGames = (
-    //     game.gameIDs !== null
-    //     ?
-    //     <table className={styles.Table}>
-    //         <tbody>
-    //             <tr>
-    //                 <th>Game ID</th>
-    //                 <th>User</th>
-    //                 <th></th>
-    //             </tr>
-    //         </tbody>
-    //         {tableContent}
-    //     </table>
-    //     :<div>
-    //         <h3 style={{color:'#2196f3', margin:'10px'}}>Loading Games ...</h3>
-    //         {/* <Spinner></Spinner> */}
-    //         <CircularProgress />
-    //     </div>
-    // )
     
     return (
         <React.Fragment>
-            <AppBar position="static">
+            <HomeAppBar currentPage='home' logoutHandler={logoutHandler}/>
+            {/* <AppBar 
+                position="static" 
+                className={clsx(classes.appBar, {
+                    [classes.appBarShift]: open,
+                })}>
                 <Toolbar>
                     <Grid container justify="space-between">
                         <Grid item>
-                            <Typography variant="h6" className={classes.title}>
-                                Kingsguard
-                            </Typography> 
+                            <Grid container justify="space-between">
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    onClick={() => setOpen(true)}
+                                    edge="start"
+                                    className={clsx(classes.menuButton, open && classes.hide)}
+                                >
+                                    <MenuIcon />
+                                </IconButton>
+                                <Grid item>
+                                    <Typography variant="h6" className={classes.title}>
+                                        Kingsguard
+                                    </Typography>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item>
                             <Button
@@ -358,7 +343,22 @@ const Home = _ => {
                         </Grid>
                     </Grid>
                 </Toolbar>
-            </AppBar>
+            </AppBar> */}
+            <Drawer
+                className={classes.drawer}
+                variant="persistent"
+                anchor="left"
+                open={open}
+                classes={{
+                    paper: classes.drawerPaper,
+                }}>
+                <div className={classes.drawerHeader}>
+                    <IconButton onClick={() => setOpen(false)}>
+                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                    </IconButton>
+                </div>
+                <Divider />
+            </Drawer>
             <Container maxWidth="xl">
                 <Modal backdropStyle={{backgroundColor:'#0000004d'}} show={isModalShow} modalClosed={() => setIsModalShow(false)}>
                     <Container maxWidth="xl">
