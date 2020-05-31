@@ -1,11 +1,13 @@
 import React from 'react'
 import styles from './Modal.module.css'
 import Backdrop from '../Backdrop/Backdrop'
+import Fade from '@material-ui/core/Fade'
 
 const Modal = props => {
     return (
         <React.Fragment>
-            <Backdrop show={props.show} clicked={props.modalClosed} />
+            <Backdrop styled={props.backdropStyle} show={props.show} clicked={props.modalClosed} />
+            <Fade in={props.show} timeout={500}>
             <div
                 className={styles.Modal}
                 style={{
@@ -15,6 +17,7 @@ const Modal = props => {
                 }}>
                 {props.children}
             </div>
+            </Fade>
         </React.Fragment>
     )
 }

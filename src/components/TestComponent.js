@@ -2,7 +2,10 @@ import React from 'react'
 
 import Wavy from './UI/Wavy/Wavy'
 import AttackEffect from './UI/AttackEffect/AttackEffect'
+import SigninForm from './UI/MaterialUI/SigninForm/SigninForm'
+import Table from './UI/GamesTable/GamesTable'
 const TestComponent = () => {
+
     const myObject = {
         id: 1,
         name: 'Tom',
@@ -20,10 +23,7 @@ const TestComponent = () => {
 
     
 
-    return <div style={{
-                width:'50px',
-                height:'50px'
-            }}><AttackEffect>123</AttackEffect></div>
+    return <Table />
     
     
 

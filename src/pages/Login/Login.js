@@ -1,128 +1,179 @@
-import React, { Component } from "react"
-import { Link } from "react-router-dom"
-import { signin, signInWithGoogle, signInWithGitHub } from "../../helpers/auth"
-import styles from './Login.module.css'
-import Button from '../../components/UI/Button/Button'
-import Spinner from '../../components/UI/Spinner/Spinner'
-export default class Login extends Component {
-  constructor() {
-    super();
-    this.state = {
-      error: null,
-      email: "",
-      password: "",
-      loading: false
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.googleSignIn = this.googleSignIn.bind(this);
-    this.githubSignIn = this.githubSignIn.bind(this);
+import React, { useState } from 'react'
+import Avatar from '@material-ui/core/Avatar'
+import Button from '@material-ui/core/Button'
+import { green } from '@material-ui/core/colors'
+//import Fade from '@material-ui/core/Fade'
+import Zoom from '@material-ui/core/Zoom'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import TextField from '@material-ui/core/TextField'
+import Link from '@material-ui/core/Link'
+import Grid from '@material-ui/core/Grid'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined'
+import Typography from '@material-ui/core/Typography'
+import { makeStyles } from '@material-ui/core/styles'
+import Container from '@material-ui/core/Container'
+import { signin, signInWithGoogle } from "../../helpers/auth"
+//import styles from './Login.module.css'
+
+const Login = () => {
+
+  const [emailInput,setEmailInput] = useState('')
+  const [pwdInput,setPwdInput] = useState('')
+  const [error, setError] = useState(null)
+  const [success,setSuccess] = useState(false)
+
+  const emailChangeHandler = (e) => {
+    setEmailInput(e.target.value)
+    setError(null)
   }
 
-  handleChange(event) {
-    this.setState({
-      [event.target.name]: event.target.value,
-      error: null
-    });
+  const pwdChangeHandler = (e) => {
+    setPwdInput(e.target.value)
+    setError(null)
   }
 
-  async handleSubmit(event) {
-    event.preventDefault();
-    this.setState({ error: "" });
+  // const handleChange = (event) => {
+  //   this.setState({
+  //     [event.target.name]: event.target.value,
+  //     error: null
+  //   });
+  // }
+
+  const signinHandle = async () => {
+    setError(null)
     try {
-      this.setState({ loading: true });
-      await signin(this.state.email, this.state.password);
-      this.setState({ loading: false });
+      setSuccess(true)
+      await signin(emailInput, pwdInput);
     } catch (error) {
-      this.setState({ 
-        loading: false,
-        error: error.message 
-      });
+      setSuccess(false)
+      setError(error.message)
     }
   }
 
-  async googleSignIn() {
+  const googleSignIn = async () => {
     try {
       await signInWithGoogle()
     } catch (error) {
-      this.setState({ error: error.message });
+      setError(error.message)
+      //this.setState({ error: error.message });
     }
   }
+  
+    // const inputStyle = {
+    //   fontSize:'15px',
+    //   width:'200px',
+    //   height:'30px',
+    // }
 
-  async githubSignIn() {
-    try {
-      await signInWithGitHub();
-    } catch (error) {
-      this.setState({ error: error.message });
-    }
-  }
+    const useStyles = makeStyles((theme) => ({
+      paper: {
+        marginTop: theme.spacing(8),
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      },
+      avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+      },
+      green: {
+        color: '#fff',
+        backgroundColor: green[500],
+      },
+      form: {
+        width: '100%', // Fix IE 11 issue.
+        marginTop: theme.spacing(1),
+      },
+      submit: {
+        margin: theme.spacing(3, 0, 2),
+      },
+    }))
 
-  render() {
-    const inputStyle = {
-      fontSize:'15px',
-      width:'200px',
-      height:'30px',
-    }
+    const classes = useStyles()
+
     return (
-      <div className={styles.Layout}>
-        <div className={styles.Form}>
-          <form
-            className="mt-5 py-5 px-5"
-            autoComplete="off"
-            onSubmit={this.handleSubmit}
+      <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+          {success ? <Zoom in={success}><Avatar className={classes.green}>
+            <LockOpenOutlinedIcon />
+          </Avatar></Zoom>
+          :<Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>}
+        
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form} noValidate>
+          <TextField
+            value={emailInput}
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            onChange={emailChangeHandler}
+          />
+          <TextField
+            value={pwdInput}
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={pwdChangeHandler}
+          />
+          {/* <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          /> */}
+          {error ? 
+          <Zoom in={error !== null} timeout={1500}> 
+            <Typography component="h6" variant="h6" color="error">
+            {error}
+            </Typography>
+          </Zoom>:null}
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={signinHandle}
           >
-            <h1>
-              Login to Kingsguard
-            </h1>
-            {/* <p className="lead">
-              Fill in the form below to login to your account.
-            </p> */}
-            <div className="form-group">
-              <input
-                style={inputStyle}
-                className="form-control"
-                placeholder="Email"
-                name="email"
-                type="email"
-                onChange={this.handleChange}
-                value={this.state.email}
-              />
-            </div>
-            <div className="form-group">
-              <input
-                style={inputStyle}
-                className="form-control"
-                placeholder="Password"
-                name="password"
-                onChange={this.handleChange}
-                value={this.state.password}
-                type="password"
-              />
-            </div>
-            <div className="form-group">
-              {this.state.loading ? <Spinner /> : this.state.error ? (
-                <p style={{color:'red'}}className="text-danger">{this.state.error}</p>
-              ) : null}
-              <Button styled={{marginTop:'20px'}} btnType="Info" clicked={this.handleSubmit}>Login</Button>
-              {/* <button className="btn btn-primary px-5" type="submit">Login</button> */}
-            </div>
-            <hr style={{marginTop:'60px'}}></hr>
-            <div className={styles.GoogleLogin} onClick={this.googleSignIn}>
-                <img alt="" style={{margin:'5px'}} src={require(`../../assets/images/google_logo.png`)}></img>
-                <h4>Sign in with Google</h4>
-            </div>
-            {/* <button className="btn btn-danger mr-2" type="button" onClick={this.googleSignIn}>
-              Sign in with Google
-            </button>
-            <button className="btn btn-secondary" type="button" onClick={this.githubSignIn}>
-              Sign in with GitHub
-            </button> */}
-            <p>
-              Don't have an account? <Link to="/signup">Sign up</Link>
-            </p>
-          </form>
-        </div>
+            Sign In
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="primary"
+            className={classes.submit}
+            onClick={googleSignIn}
+            
+          >
+            <img alt="" style={{margin:'5px'}} src={require(`../../assets/images/google_logo.png`)}></img>Sign in with Google
+          </Button>
+          <Grid container>
+            <Grid item>
+              <Link href="/Signup" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
       </div>
+    </Container>
     )
-  }
+  
 }
+
+export default Login

@@ -1,18 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react'
-import Button from '../../components/UI/Button/Button'
-import Input from '../../components/UI/Input/Input'
+import Button from '@material-ui/core/Button'
+//import Input from '../../components/UI/Input/Input'
 import Modal from '../../components/UI/Modal/Modal'
+import Backdrop from '@material-ui/core/Backdrop';
 import { db, auth } from '../../services/firebase'
 import { Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import * as actions from '../../store/actions/index'
-import Spinner from '../../components/UI/Spinner/Spinner'
+//import Spinner from '../../components/UI/Spinner/Spinner'
+import GamesTable from '../../components/UI/GamesTable/GamesTable'
 import { logout } from '../../helpers/auth' 
 import { useHistory } from 'react-router-dom'
-import styles from './Home.module.css'
+//import styles from './Home.module.css'
+//import Modal from '@material-ui/core/Modal'
+//import Backdrop from '@material-ui/core/Backdrop'
+//import Fade from '@material-ui/core/Fade'
+import { makeStyles } from '@material-ui/core/styles'
+import { green } from '@material-ui/core/colors'
 
-const Home = () => {
+import Container from '@material-ui/core/Container'
+import AppBar from '@material-ui/core/AppBar'
+import Grid from '@material-ui/core/Grid'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
+import CircularProgress from '@material-ui/core/CircularProgress'
+
+//import IconButton from '@material-ui/core/IconButton'
+//import MenuIcon from '@material-ui/icons/Menu'
+//import Slide from '@material-ui/core/Slide'
+//import useScrollTrigger from '@material-ui/core/useScrollTrigger'
+
+
+const Home = _ => {
 
     //const [gameKey] = useState(db.ref().child('games').push().key)
     const joinInput = useRef()
@@ -26,6 +47,7 @@ const Home = () => {
     const [isCreated, setIsCreated] = useState(false)
     const [isJoined, setIsJoined] = useState(false)
     const [isModalShow, setIsModalShow] = useState(false)
+    const [gameInput, setGameInput] = useState('')
     //const [isGamesViewShow, setIsGamesViewShow] = useState(false)
     const [joinError, setJoinError] = useState(null)
     const [newKey, setNewKey] = useState(null)
@@ -40,6 +62,36 @@ const Home = () => {
         touched: false
 
     })
+    const useStyles = makeStyles((theme) => ({
+        paper: {
+          marginTop: theme.spacing(8),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        },
+        avatar: {
+          margin: theme.spacing(1),
+          backgroundColor: theme.palette.secondary.main,
+        },
+        green: {
+          color: '#fff',
+          backgroundColor: green[500],
+        },
+        form: {
+          width: '100%', // Fix IE 11 issue.
+          marginTop: theme.spacing(1),
+        },
+        submit: {
+          margin: theme.spacing(3, 0, 2),
+        },
+        modal: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+      }))
+  
+      const classes = useStyles()
 
     const writeUserData = async (key, content) => {
         try {
@@ -92,17 +144,6 @@ const Home = () => {
         localStorage.setItem('gameKey', newKey)
     }
 
-    const joinGameHandler = () => {
-        //console.log('joinInput.current',joinInput.current)
-        //joinInput.current.focus()
-        setIsModalShow(true)
-        
-    }
-
-    // const viewGamesHandler = async () => {
-    //     setIsGamesViewShow(true)
-    // }
-
     const updateGameInfo = async (gameKey,data) => {
         let updates = {}
         updates['/games/' + gameKey] = {...data}
@@ -115,7 +156,8 @@ const Home = () => {
         }    
     }
     const clickGameHandler = (gameKey) => {
-        
+        console.log('[clickGameHandler]')
+        console.log(gameKey)
         db.ref().child("games").orderByChild("gid").equalTo(gameKey).once("value",snapshot => {
             if (snapshot.exists()){
                 //console.log("snapshot.val() : ",snapshot.val())
@@ -132,7 +174,7 @@ const Home = () => {
                 localStorage.setItem('gameKey', gameKey)
             }
             else {
-                alert('ID does not exist !!')
+                console.log('ID does not exist !!')
                 setInputConfig({
                     ...inputConfig,
                     invalid: true
@@ -141,21 +183,21 @@ const Home = () => {
         })
     }
     const joinSubmitHandler = () => {
-        db.ref().child("games").orderByChild("gid").equalTo(inputConfig.value.trim()).once("value",snapshot => {
+        const userInput = gameInput.trim()
+        db.ref().child("games").orderByChild("gid").equalTo(userInput).once("value",snapshot => {
             if (snapshot.exists()){
                 dispatch(actions.setUserSide('red'))
                 setJoinError(null)
-                setJoinKey(inputConfig.value.trim())
-                //console.log('exists : ',snapshot.val())
-                updateGameInfo(inputConfig.value.trim(),{
-                    ...snapshot.val()[inputConfig.value.trim()],
+                setJoinKey(userInput)
+                updateGameInfo(userInput,{
+                    ...snapshot.val()[userInput],
                     currentState: 'blueJoined',
                     blue: auth().currentUser.email,
                     turn: 'red',
                 })
-                dispatch(actions.initGameInfo(inputConfig.value.trim(),'blue'))
+                dispatch(actions.initGameInfo(userInput,'blue'))
                 console.log('Join')
-                localStorage.setItem('gameKey', inputConfig.value.trim())
+                localStorage.setItem('gameKey', userInput)
                 //setIsJoined(true)
                 setInputConfig({
                     ...inputConfig,
@@ -163,7 +205,7 @@ const Home = () => {
                 })
             }
             else {
-                setJoinError('ID does not exist !!')
+                setJoinError('Game not found !!')
                 setInputConfig({
                     ...inputConfig,
                     invalid: true
@@ -174,29 +216,34 @@ const Home = () => {
     }
 
 
-    const inputChangedHandler = e => {
-        setInputConfig({
-            ...inputConfig,
-            value:e.target.value,
-            touched: true,
-            invalid: false
-        })
-        setJoinError(null)
+    // const inputChangedHandler = e => {
+    //     setInputConfig({
+    //         ...inputConfig,
+    //         value:e.target.value,
+    //         touched: true,
+    //         invalid: false
+    //     })
+    //     setJoinError(null)
         
-        
-    }
+    // }
+
     //console.log("inputConfig : ",inputConfig.value)
     const logoutHandler = () => {
         history.push("/")
         logout()
     }
-    const optionStyle = {
-        margin:'20px',
-        width: '180px',
-        height: '120px',
-        fontSize:'25px',
-        borderRadius: '50px'
+
+    const gameInputHandler = (e) => {
+        setGameInput(e.target.value)
+        setJoinError(null)
     }
+    // const optionStyle = {
+    //     margin:'20px',
+    //     width: '180px',
+    //     height: '120px',
+    //     fontSize:'25px',
+    //     borderRadius: '50px'
+    // }
     const render = (
         isCreated ? <Redirect to={{ 
             pathname: '/game', 
@@ -214,94 +261,177 @@ const Home = () => {
                 userSide: 'blue'
             }
         }}/>
-        :<div>
-            <Button styled={optionStyle} btnType="Success" clicked={createGameHandler}>Create Game</Button>
-            <Button styled={optionStyle} btnType="Success" clicked={joinGameHandler}>Join Game</Button>
-            {/* <Button btnType="Success" clicked={viewGamesHandler}>Game Lobby</Button> */}
-        </div>
+        :<div style={{margin:'50px'}}><Grid container justify="center" spacing={3}>
+            <Grid item xs={3}>
+                <Button
+                    fullWidth
+                    variant="outlined"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={createGameHandler}>
+                        Create Game
+                </Button>
+            </Grid>
+            <Grid item xs={3}>
+                <Button
+                    fullWidth
+                    variant="outlined"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={() => setIsModalShow(true)}>
+                    Join Game
+                </Button>
+            </Grid>
+        </Grid></div>
     )
-    const tableContent = game.gameIDs !== null 
-    ? Object.keys(game.gameIDs).reverse().map( (gameID,index) => {
-        if (index < 10)
-            return (
-                <tbody key={gameID}>
-                    <tr>
-                        <td style={{
-                            color:'red',
-                            fontSize:'25px'}}>
-                            {gameID}
-                        </td>
-                        <td>
-                            {game.gameIDs[gameID].creater}
-                        </td>
-                        <td>
-                            {game.gameIDs[gameID].currentState === 'waitingBlue' 
-                            ? <Button btnType="Info" clicked={ _ => clickGameHandler(gameID)} >Join</Button>
-                            : <p style={{color:'red'}}>Playing</p>}
-                        </td>
-                    </tr>
-                </tbody>
-            )
-        else return null
-        })
-    : null
-    const renderGames = (
-        game.gameIDs !== null
-        ?
-        <table className={styles.Table}>
-            <tbody>
-                <tr>
-                    <th>Game ID</th>
-                    <th>User</th>
-                    <th></th>
-                </tr>
-            </tbody>
-            {tableContent}
-        </table>
-        :<div>
-            <h3 style={{margin:'10px'}}>Loading Games ...
-            <Spinner></Spinner>
-            </h3>
-        </div>
-    )
+    // const tableContent = game.gameIDs !== null 
+    // ? Object.keys(game.gameIDs).reverse().map( (gameID,index) => {
+    //     if (index < 10)
+    //         return (
+    //             <tbody key={gameID}>
+    //                 <tr>
+    //                     <td style={{
+    //                         color:'red',
+    //                         fontSize:'25px'}}>
+    //                         {gameID}
+    //                     </td>
+    //                     <td>
+    //                         {game.gameIDs[gameID].creater}
+    //                     </td>
+    //                     <td>
+    //                         {game.gameIDs[gameID].currentState === 'waitingBlue' 
+    //                         ? <Button
+    //                             fullWidth
+    //                             variant="contained"
+    //                             color="primary"
+    //                             className={classes.submit}
+    //                             onClick={() => clickGameHandler(gameID)}>
+    //                             Join
+    //                         </Button>
+    //                     // <Button btnType="Info" clicked={ _ => clickGameHandler(gameID)} >Join</Button>
+    //                         : <p style={{color:'red'}}>Playing</p>}
+    //                     </td>
+    //                 </tr>
+    //             </tbody>
+    //         )
+    //     else return null
+    //     })
+    // : null
+
+    // const renderGames = (
+    //     game.gameIDs !== null
+    //     ?
+    //     <table className={styles.Table}>
+    //         <tbody>
+    //             <tr>
+    //                 <th>Game ID</th>
+    //                 <th>User</th>
+    //                 <th></th>
+    //             </tr>
+    //         </tbody>
+    //         {tableContent}
+    //     </table>
+    //     :<div>
+    //         <h3 style={{color:'#2196f3', margin:'10px'}}>Loading Games ...</h3>
+    //         {/* <Spinner></Spinner> */}
+    //         <CircularProgress />
+    //     </div>
+    // )
     
-    return (    
+    return (
         <React.Fragment>
-            <Modal show={isModalShow} modalClosed={() => setIsModalShow(false)}>
-                <p>Enter Game ID</p>
-                <p style={{color:'red'}}>{joinError}</p>
-                {/* <input ref={joinInput} type="text"></input> */}
-                <Input
-                    ref={joinInput}
-                    id='joinInput'
-                    text="input"
-                    value={inputConfig.value} 
-                    changed={e => inputChangedHandler(e)}
-                    elementConfig={{type:inputConfig.type,placeholder:inputConfig.placeholder}}
-                    invalid={inputConfig.invalid}
-                    touched={inputConfig.touched}
-                >   
-                </Input>
-                <div>
-                    <Button disabled={!(inputConfig.touched && !inputConfig.invalid)} btnType="Success" clicked={joinSubmitHandler}>Join</Button>
-                    <Button btnType="Danger" clicked={() => setIsModalShow(false)}>Close</Button>
-                </div>
-            </Modal>
-            {/* <Modal show={isGamesViewShow} modalClosed={ () => setIsGamesViewShow(false)}>
-                {renderGames}
-            </Modal> */}
-            <div className={styles.Logout}>
-                <Button btnType="Danger" clicked={logoutHandler}>Logout</Button>
-            </div>
-            <div className={styles.Options}>
+            <AppBar position="static">
+                <Toolbar>
+                    <Grid container justify="space-between">
+                        <Grid item>
+                            <Typography variant="h6" className={classes.title}>
+                                Kingsguard
+                            </Typography> 
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                onClick={logoutHandler}>
+                                Logout
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Toolbar>
+            </AppBar>
+            <Container maxWidth="xl">
+                <Modal backdropStyle={{backgroundColor:'#0000004d'}} show={isModalShow} modalClosed={() => setIsModalShow(false)}>
+                    <Container maxWidth="xl">
+                        <form>
+                            {joinError ?<TextField 
+                                id="standard-basic"
+                                error
+                                helperText="Game not found"
+                                value={gameInput}
+                                label="Game ID" 
+                                onChange={gameInputHandler}
+                                />
+                            :<TextField 
+                                value={gameInput}
+                                id="standard-basic" 
+                                label="Game ID" 
+                                onChange={gameInputHandler}
+                                />}
+                        </form>
+                    <Grid container justify="center" spacing={3}>
+                        <Grid item>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="primary"
+                                className={classes.submit}
+                                disabled={gameInput === ''}
+                                //disabled={!(inputConfig.touched && !inputConfig.invalid)}
+                                onClick={joinSubmitHandler}>
+                                Join
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="secondary"
+                                className={classes.submit}
+                                onClick={() => setIsModalShow(false)}>
+                                Cancel
+                            </Button>
+                        </Grid>
+                    </Grid>
+                    </Container>
+                </Modal>
                 {render}
-            </div>
-            <div className={styles.Games}>
-                {renderGames}    
-            </div>
-            
+                {/* <div className={styles.Games}>
+                    {renderGames}    
+                </div> */}
+                {game.gameIDs 
+                ?<div style={{
+                    margin:'auto',
+                    paddingTop:'20px',
+                    height:'400px',
+                    width:'450px'
+                }}>
+                    <GamesTable data={game.gameIDs} joinHandler={clickGameHandler} />
+                </div>
+                // ? <Grid container justify="center" direction="column" alignItems="center">
+                //     <Grid item xs={12}>
+                //         <GamesTable data={game.gameIDs} joinHandler={clickGameHandler} />
+                //     </Grid>
+                // </Grid>
+                :<Grid container justify="center" direction="column" alignItems="center">
+                    <Grid item>
+                        <h3 style={{color:'#2196f3', margin:'10px'}}>Loading Games ...</h3>
+                    </Grid>
+                    <Grid item>
+                        <CircularProgress />
+                    </Grid>
+                </Grid>}
+            </Container>
         </React.Fragment>
-        
     )
 }
 

@@ -3,14 +3,25 @@ import { db } from '../../services/firebase'
 import { auth } from '../../services/firebase'
 import Guard from '../../components/Guard/Guard'
 import BoardControl from '../BoardControl/BoardControl'
-import Spinner from '../../components/UI/Spinner/Spinner'
+//import Spinner from '../../components/UI/Spinner/Spinner'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'
+import Link from '@material-ui/core/Link'
 import * as actions from '../../store/actions/index'
 import styles from './GameController.module.css'
 import FillUpModal from '../../components/UI/FillUpModal/FillUpModal'
-import Button from '../../components/UI/Button/Button'
+//import Button from '../../components/UI/Button/Button'
+import Button from '@material-ui/core/Button'
+import AppBar from '@material-ui/core/AppBar'
+import Grid from '@material-ui/core/Grid'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import { makeStyles } from '@material-ui/core/styles'
+import { green } from '@material-ui/core/colors'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Paper from '@material-ui/core/Paper';
+
 // import Modal from '../../components/UI/Modal/Modal'
 
 
@@ -29,7 +40,36 @@ const GameController = (props) => {
     
 
     const dispatch = useDispatch()
-
+    const useStyles = makeStyles((theme) => ({
+        paper: {
+          marginTop: theme.spacing(8),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        },
+        avatar: {
+          margin: theme.spacing(1),
+          backgroundColor: theme.palette.secondary.main,
+        },
+        green: {
+          color: '#fff',
+          backgroundColor: green[500],
+        },
+        form: {
+          width: '100%', // Fix IE 11 issue.
+          marginTop: theme.spacing(1),
+        },
+        submit: {
+          margin: theme.spacing(3, 0, 2),
+        },
+        modal: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+      }))
+  
+      const classes = useStyles()
     
 
     useEffect( () => {
@@ -1025,12 +1065,6 @@ const GameController = (props) => {
         let newAttacked = []
         if (!defender.isShelled) {
             newAttacked.push(defender.id)
-            // newMessage[defender.side] = {
-            //     [defender.name] : {
-            //         preHp: defender.hp,
-            //         curHp: defender.hp > attacker.dmg ? defender.hp - (attacker.dmg*1.5) : 0
-            //     }
-            // }
             defender.prevHp = defender.hp
             defender.hp = defender.hp > attacker.dmg ? defender.hp - (attacker.dmg*1.5) : 0
             if (defender.name === 'King' && defender.hp <= 0) {
@@ -1046,25 +1080,22 @@ const GameController = (props) => {
         }
         
         if (withinAttack(attacker.pos, defender.pos, defender.range)) {
-            newAttacked.push(attacker.id)
-            // newMessage[attacker.side] = {
-            //     [attacker.name] : {
-            //         preHp: attacker.hp,
-            //         curHp: attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
-            //     }
-            // }
-            attacker.prevHp = attacker.hp
-            attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
-            if (attacker.name === 'King' && attacker.hp <= 0) {
-                for (let i = 0; i < copyGuards.length; i++) {
-                    if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
-                        newAttacked.push(copyGuards[i].id)
-                        copyGuards[i].prevHp = copyGuards[i].hp
-                        copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
-                        copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+            if (!attacker.isShelled) {
+                newAttacked.push(attacker.id)
+                attacker.prevHp = attacker.hp
+                attacker.hp = attacker.hp > defender.dmg ? attacker.hp - defender.dmg : 0
+                if (attacker.name === 'King' && attacker.hp <= 0) {
+                    for (let i = 0; i < copyGuards.length; i++) {
+                        if (copyGuards[i].side === attacker.side && copyGuards[i].isPlaced) {
+                            newAttacked.push(copyGuards[i].id)
+                            copyGuards[i].prevHp = copyGuards[i].hp
+                            copyGuards[i].hp = (copyGuards[i].hp/3).toFixed(0)
+                            copyGuards[i].dmg = (copyGuards[i].dmg/3).toFixed(0)
+                        }
                     }
                 }
             }
+            if (attacker.isShelled) copyGuards[attacker.id - 1].isShelled = false
         }
         if (defender.isShelled) copyGuards[defender.id - 1].isShelled = false
         const newGameInfo = {
@@ -1208,27 +1239,58 @@ const GameController = (props) => {
     </div>
     return (
         <React.Fragment>
+            {game.gameInfo?
+            <AppBar style={{zIndex:'700'}} position="fixed">
+                <Toolbar>
+                    <Grid container justify="space-between">
+                        <Grid item>
+                            <Typography variant="h6" className={classes.title}>
+                                Kingsguard
+                            </Typography> 
+                        </Grid>
+                        <Grid item>
+                            <Paper style={{padding:'10px'}} elevation={5}>{game.gameInfo.gid}</Paper>
+                        </Grid>
+                        <Grid item>
+                            <Paper style={{padding:'10px'}} elevation={5}>Team <strong style={{color: userSide === 'red' ? 'red' : 'blue'}}>{userSide}</strong></Paper>
+                        </Grid>
+                        <Grid item>
+                            <Paper style={{padding:'10px'}} elevation={5}><strong>{user.email}</strong></Paper>
+                        </Grid>
+                        <Grid item>
+                            <Link underline='none' to="/">
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    onClick={leaveHandler}>
+                                    Leave
+                                </Button>
+                            </Link>
+                        </Grid>
+                    </Grid>
+                </Toolbar>
+            </AppBar>:null}
             <FillUpModal show={isFilling} modalClosed={null}>
                 <h3>One of your unit is dead,please choice an unit to fill </h3>
                 {renderGuards}
             </FillUpModal>
-            {game.gameInfo 
-            ?   <div style={{position:'fixed'}} className={styles.GameInfos}>
-                    
-                    <Link to="/">
-                        <Button btnType="Danger" clicked={leaveHandler}>Leave</Button>
-                    </Link>
-                    
-                    
-                    <div className={styles.GameInfo}>Game ID : <strong>{game.gameInfo.gid}</strong></div>
-                    <div className={styles.GameInfo}>You're <strong style={{color: userSide === 'red' ? 'red' : 'blue'}}>{userSide}</strong></div>
-                    <div className={styles.GameInfo}>User : <strong>{user.email}</strong></div>
-                </div>
-            : null}
+            {/* {game.gameInfo
+            ? <Grid style={{marginTop:'20px'}} container justify="center" alignItems="center" spacing={10}>
+                <Grid item>
+                    <Paper style={{padding:'10px'}} elevation={5}>ID :{game.gameInfo.gid}</Paper>
+                </Grid>
+                <Grid item>
+                    <Paper style={{padding:'10px'}} elevation={5}>You're <strong style={{color: userSide === 'red' ? 'red' : 'blue'}}>{userSide}</strong></Paper>
+                </Grid>
+                <Grid item>
+                    <Paper style={{padding:'10px'}} elevation={5}>User : <strong>{user.email}</strong></Paper>
+                </Grid>
+            </Grid>
+            : null} */}
 
             <div className={styles.GameController}>
                 {game.gameInfo === null
-                ? localStorage.getItem('gameKey') ?  <Spinner /> : renderBoard
+                ? localStorage.getItem('gameKey') ?  <CircularProgress /> : renderBoard
                 : renderBoard 
                 }
                 

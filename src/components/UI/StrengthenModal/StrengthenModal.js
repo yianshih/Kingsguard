@@ -5,7 +5,7 @@ import Backdrop from '../Backdrop/Backdrop'
 const StrengthenModal = props => {
     return (
         <React.Fragment>
-            <Backdrop show={props.show} clicked={props.modalClosed} />
+            <Backdrop styled={props.backdropStyle} show={props.show} clicked={props.modalClosed} />
             <div
                 className={styles.Modal}
                 style={{
