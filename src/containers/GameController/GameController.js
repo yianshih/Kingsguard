@@ -91,7 +91,7 @@ const GameController = (props) => {
         
 
         if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
-            console.log('should fill')
+            //console.log('should fill')
             if (newGameInfo === null) {
                 setNewGameInfo({...newData})
             }
@@ -192,7 +192,7 @@ const GameController = (props) => {
             shouldUpdate = true
             newGuards = [...newGuards].map( g => {
                 if (g.side === side && g.isPlaced && g.name !== 'King') {
-                    console.log('dmg + 10')
+                    //console.log('dmg + 10')
                     return {...g,dmg:+g.dmg + 10}
                 }
                 else return {...g}
@@ -1214,7 +1214,6 @@ const GameController = (props) => {
                             abilityHandler={abilityHandler}
                             abilityAttackHandler={abilityAttackHandler}
                             checkAngelBonus={checkAngelBonus}
-                            checkKingBonus={checkKingBonus}
                             bonusUpdate={bonusUpdate}
                         />
 

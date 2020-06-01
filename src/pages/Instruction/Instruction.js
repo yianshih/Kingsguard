@@ -6,7 +6,6 @@ import Step from '@material-ui/core/Step'
 import StepLabel from '@material-ui/core/StepLabel'
 import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
 import { Grid } from '@material-ui/core'
 import Waiting from '../../components/Instructions/Waiting'
 import Strengthening from '../../components/Instructions/Strengthening'
@@ -29,23 +28,6 @@ const useStyles = makeStyles((theme) => ({
 function getSteps() {
   return ['Waiting Opponent', 'Strengthening Guards', 'Placing Guards','Fighting'];
 }
-
-// function getStepContent(stepIndex) {
-
-//     const step = getSteps()
-//     switch (stepIndex) {
-//         case 0:
-//             return step[0]
-//         case 1:
-//             return step[1]
-//         case 2:
-//             return step[2]
-//         case 3:
-//             return step[3]
-//         default:
-//             return 'Unknown stepIndex';
-//   }
-// }
 
 function getInstructionContent(stepIndex) {
     switch (stepIndex) {
@@ -74,10 +56,6 @@ const Instruction = () => {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
     };
 
     return (

@@ -54,7 +54,7 @@ class MuiVirtualizedTable extends React.PureComponent {
   cellRenderer = ({ cellData, columnIndex }) => {
     //console.log("this.props : ",this.props)
     //const id = this.props.idGetter()
-    const { columns, classes, rowHeight, onRowClick } = this.props
+    const { classes, rowHeight, onRowClick } = this.props
     const newData = columnIndex === 2 
       ? cellData[1] === 'waitingBlue'
         ?<Button
@@ -76,7 +76,7 @@ class MuiVirtualizedTable extends React.PureComponent {
         })}
         variant="body"
         style={{ height: rowHeight }}
-        align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
+        //align={(columnIndex != null && columns[columnIndex].numeric) || false ? 'right' : 'left'}
       >
         {newData}
       </TableCell>

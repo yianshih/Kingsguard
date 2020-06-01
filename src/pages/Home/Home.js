@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Button from '@material-ui/core/Button'
-//import Input from '../../components/UI/Input/Input'
 import Modal from '../../components/UI/Modal/Modal'
-import Backdrop from '@material-ui/core/Backdrop';
+
 import { db, auth } from '../../services/firebase'
 import { Redirect } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -16,30 +15,21 @@ import { makeStyles, useTheme } from '@material-ui/core/styles'
 import { green } from '@material-ui/core/colors'
 
 import Container from '@material-ui/core/Container'
-import AppBar from '@material-ui/core/AppBar'
 import Grid from '@material-ui/core/Grid'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 import Divider from '@material-ui/core/Divider'
-import clsx from 'clsx'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import HomeAppBar from '../../components/UI/HomeAppBar/HomeAppBar'
-//import Slide from '@material-ui/core/Slide'
-//import useScrollTrigger from '@material-ui/core/useScrollTrigger'
+
 
 
 
 const Home = _ => {
 
-    //const [gameKey] = useState(db.ref().child('games').push().key)
-    const joinInput = useRef()
-    //const newRef = useRef()
     const history = useHistory()
     const game = useSelector(state => state.game)
     const guards = useSelector(state => state.guards)
@@ -121,7 +111,7 @@ const Home = _ => {
 
     const writeUserData = async (key, content) => {
         try {
-            console.log('writing data')
+            //console.log('writing data')
             await db.ref('games/' + key).set(content)
             dispatch(actions.initGameInfo(key,'red'))
 
@@ -145,7 +135,7 @@ const Home = _ => {
     },[])
 
     const createGameHandler = () => {
-        console.log('creating') 
+        //console.log('creating') 
         const newKey = db.ref().child('games').push().key.substring(1)
         const content = {
             creater: auth().currentUser.email,
@@ -182,8 +172,8 @@ const Home = _ => {
         }    
     }
     const clickGameHandler = (gameKey) => {
-        console.log('[clickGameHandler]')
-        console.log(gameKey)
+        //console.log('[clickGameHandler]')
+        //console.log(gameKey)
         db.ref().child("games").orderByChild("gid").equalTo(gameKey).once("value",snapshot => {
             if (snapshot.exists()){
                 //console.log("snapshot.val() : ",snapshot.val())
@@ -195,7 +185,7 @@ const Home = _ => {
                     currentState: 'blueJoined',
                     turn: 'red',
                 })
-                console.log('Join')
+                //console.log('Join')
                 dispatch(actions.initGameInfo(gameKey,'blue'))
                 localStorage.setItem('gameKey', gameKey)
             }

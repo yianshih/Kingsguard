@@ -1,15 +1,8 @@
 import React, { useState}from 'react'
-//import { useSelector } from 'react-redux'
-//import { useDispatch } from 'react-redux'
-//import { useDispatch } from 'react-redux'
-import styles from './GuardsStrengthen.module.css'
 import GuardStrengthen from './GuardStrengthen/GuardStrengthen'
-//import Button from '../UI/Button/Button'
 import Button from '@material-ui/core/Button'
-//import * as actions from '../../store/actions/index'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
-import GridListTileBar from '@material-ui/core/GridListTileBar'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import { makeStyles } from '@material-ui/core/styles'
 import { Container } from '@material-ui/core'
@@ -17,12 +10,8 @@ import { Container } from '@material-ui/core'
 
 const GuardsStrengthen = props => {
     
-    //const dispatch = useDispatch()
     const [ points, setPoints ] = useState(5)
-    //const guards = useSelector(state => state.guards)
     const copyGuards = props.guards
-    //const copyGuards = [...guards]
-    //console.log("copyGuards : ",copyGuards)
     const sideGuards = copyGuards.filter( g => g.side === props.side)
     const useStyles = makeStyles((theme) => ({
         root: {

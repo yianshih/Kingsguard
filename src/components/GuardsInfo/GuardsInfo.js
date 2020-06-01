@@ -1,10 +1,7 @@
 import React from 'react'
-//import { useSelector } from 'react-redux';
 import styles from './GuardsInfo.module.css'
 import { useSelector } from 'react-redux'
 import Bar from '../UI/Bar/Bar'
-//import Button from '../UI/Button/Button'
-import Button from '@material-ui/core/Button'
 import GpsFixedRoundedIcon from '@material-ui/icons/GpsFixedRounded'
 import IconButton from '@material-ui/core/IconButton'
 

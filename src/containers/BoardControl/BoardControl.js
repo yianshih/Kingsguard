@@ -27,7 +27,7 @@ const BoardControl = props => {
     const [firebaseError] = useState(null)
     const [isFilling, setIsFilling] = useState(false)
     const [isWaiting, setIsWaiting] = useState(false)
-    const [isGuardOptionModalShow, setIsGuardOptionModalShow] = useState(false)
+    //const [isGuardOptionModalShow, setIsGuardOptionModalShow] = useState(false)
     const [isStrengthModalShow, setIsStrengthModalShow] = useState(false)
     const game = useSelector(state => state.game)
     //const history = useHistory()
@@ -41,10 +41,10 @@ const BoardControl = props => {
         switch(gameStage) {
             case 'strengthening':
                 if (props.userSide === actionTurn) return strengtheningHandler()
-                else return console.log('waiting for opponent') 
+                else return 
             case 'placing':
                 if (props.userSide === actionTurn) return placingHandler(actionTurn)
-                else return console.log('waiting for opponent') 
+                else return 
             case 'fighting':
                 if (props.userSide === actionTurn) return fightingHandler(actionTurn)
                 else return
@@ -53,21 +53,6 @@ const BoardControl = props => {
         }
     }
 
-
-    // useEffect( () => {
-    //     if (game.gameInfo.message !== 'unknown' && typeof game.gameInfo.message !== 'undefined') {
-    //         console.log('reset message')
-    //         return setTimeout(() => {
-    //             props.updateGameInfo({
-    //                 ...game.gameInfo,
-    //                 message:'unknown'
-    //             })
-    //         },3000) 
-    //     }
-    //     else {
-    //         console.log('do not reset message')   
-    //     }
-    // },[])
 
     useEffect( () => {
 
@@ -95,7 +80,7 @@ const BoardControl = props => {
                 },2000)
             }
             else if (!game.gameInfo.bonus && shouldBonus) {
-                console.log("applying bonus")
+                //console.log("applying bonus")
                 props.bonusUpdate(props.userSide)
             }
 
@@ -173,7 +158,7 @@ const BoardControl = props => {
     }
     const squaresPlacingClickHandler = (pos) => {
 
-        console.log('[squaresPlacingClickHandler]')
+        //console.log('[squaresPlacingClickHandler]')
         props.squaresPlacingClickHandler(pos)
         //setDoneBtnDisabled(false)
         
@@ -193,7 +178,7 @@ const BoardControl = props => {
     }
 
     const strengtheningHandler = () => {
-        console.log('[strengtheningHandler]')
+        //console.log('[strengtheningHandler]')
         if (props.userSide === 'blue') return setTimeout( () => { setIsStrengthModalShow(true) },1100)
         else return setIsStrengthModalShow(true)
     }
@@ -206,27 +191,6 @@ const BoardControl = props => {
         }
         props.updateGameInfo(copyGameInfo)
     }
-
-    const closeModalHandler = () => {
-        setIsGuardOptionModalShow(false)
-        dispatch(actions.setWhosMoving(null))
-        dispatch(actions.setWhosAttacking(null))
-    }
-
-    const guardsFightingMovingHandler = (id) => {
-        //const id = clickedGuard
-        setIsGuardOptionModalShow(false)
-        props.guardsFightingMovingHandler(id)
-
-    }
-
-    const guardsAttackHandler = (id) => {
-        //const id = clickedGuard
-        setIsGuardOptionModalShow(false)
-        //setWhosAttacking(id)
-        props.guardsAttackHandler(id)
-    }
-
 
     const guardsFightingClickHandler = (id) => {
 
@@ -253,7 +217,7 @@ const BoardControl = props => {
             else if (game.whosMoving !== null || game.whosAttacking !== null) {
                 // -- double clicked --
                 props.fightingActionCanceled()
-                setIsGuardOptionModalShow(false)
+                //setIsGuardOptionModalShow(false)
             }
             else {
                 if (game.whosAbility !== null) return props.abilityAttackHandler(id)
@@ -325,14 +289,14 @@ const BoardControl = props => {
     }
 
     const placingHandler = (side) => {
-        console.log('placing start')
+        //console.log('placing start')
         props.setUnplacedGuardsDisabled(side,false)
 
     }
 
-    const jumpToFighting = () => {
-        props.setJumpToFighting()
-    }
+    // const jumpToFighting = () => {
+    //     props.setJumpToFighting()
+    // }
 
     const fightingHandler = (turn) => {
         //props.checkKingBonus(turn)
@@ -453,12 +417,6 @@ const BoardControl = props => {
             <Modal styled={{backgroundColor:'white',overflow: 'hidden'}} show={game.gameInfo ? game.gameInfo.winner !== "unknown" ? true : false : false} modalClosed={null}>
                 <h1>Winner : {game.gameInfo ? game.gameInfo.winner !== "unknown" ? game.gameInfo.winner : null : false}</h1>
             </Modal>
-            {/* <GuardOptionModal show={isGuardOptionModalShow} modalClosed={closeModalHandler}>
-                <Button btnType='Success' clicked={guardsFightingMovingHandler}>Move</Button>
-                <Button btnType='Success' clicked={guardsAttackHandler}>Attack</Button>
-                <Button btnType='Danger' clicked={closeModalHandler}>Close</Button>
-            </GuardOptionModal> */}
-            {/* {props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} */}
             
             <Modal styled={{backgroundColor:'white',overflow: 'hidden'}} show={props.userSide === 'red' && game.gameInfo.currentState === 'blueJoined'} modalClosed={null}>
                 <div className={styles.GameStart}>
@@ -468,22 +426,13 @@ const BoardControl = props => {
                         disabled={!(game.gameInfo.currentState === 'blueJoined')}
                         onClick={gameStartHandler}>Game Start
                     </Button>
-                    {/* <Button
-                        variant="outlined"
-                        color="secondary" 
-                        disabled={game.gameInfo.currentState.split("_")[0] === 'fighting'}
-                        onClick={jumpToFighting}>Jump To Fight
-                    </Button> */}
-
-                    {/* <Button btnType="Success" clicked={gameStartHandler} disabled={!(game.gameInfo.currentState === 'blueJoined')}>Game Start</Button>
-                    <Button btnType="Info" clicked={jumpToFighting} disabled={game.gameInfo.currentState.split("_")[0] === 'fighting'}> Jump To Fighting</Button> */}
                 </div>
             </Modal>
             <AbilityModal show={game.gameInfo.currentState.split('_')[0] === 'placing' && game.gameInfo.turn === props.userSide && !isWaiting} modalClosed={null}>
                 <Wavy>Placing your units</Wavy>
             </AbilityModal>
 
-            <AbilityModal styled={{backgroundColor:'#ffffff00',overflow: 'hidden'}} show={game.whosAbility !== null || game.whosMoving !== null || game.whosAttacking !== null} modalClosed={null}>
+            <AbilityModal styled={{backgroundColor:'#ffffff00',overflow: 'hidden'}} show={(game.whosAbility !== null || game.whosMoving !== null || game.whosAttacking !== null) && game.gameInfo.currentState.split("_")[0] === 'fighting'} modalClosed={null}>
                 <Wavy>Choose your target</Wavy>
                 <Button
                     variant="contained"
