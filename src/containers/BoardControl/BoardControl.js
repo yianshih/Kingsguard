@@ -483,14 +483,13 @@ const BoardControl = props => {
                 <Wavy>Placing your units</Wavy>
             </AbilityModal>
 
-            <AbilityModal styled={{backgroundColor:'#ffffff00',overflow: 'hidden'}} show={game.whosAbility !== null} modalClosed={null}>
+            <AbilityModal styled={{backgroundColor:'#ffffff00',overflow: 'hidden'}} show={game.whosAbility !== null || game.whosMoving !== null || game.whosAttacking !== null} modalClosed={null}>
                 <Wavy>Choose your target</Wavy>
                 <Button
-                    variant="outlined"
+                    variant="contained"
                     color="secondary" 
                     onClick={props.fightingActionCanceled}>Cancel
                 </Button>
-                {/* <Button clicked={props.fightingActionCanceled} btnType="Danger">Cancel</Button> */}
             </AbilityModal>
             
             <div className={styles.GameBoard}>

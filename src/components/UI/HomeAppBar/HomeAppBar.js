@@ -109,9 +109,9 @@ const PersistentDrawerLeft = (props) => {
       <CssBaseline />
       <AppBar
         position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
+        className={
+          clsx(classes.appBar, {[classes.appBarShift]: open,})
+        }
       >
         <Toolbar>
             <Grid container justify="space-between" alignItems="center">
@@ -165,19 +165,19 @@ const PersistentDrawerLeft = (props) => {
                 <ListItem button>
                     <ListItemIcon><HomeIcon color={props.currentPage === 'home' ? 'primary' :'disabled'}/></ListItemIcon>
                     {/* <ListItemText primary="Home"/> */}
-                    <ListItemText primary={<Typography color={props.currentPage === 'home' ? 'primary' :'textPrimary'}>Home</Typography>}/>
+                    <ListItemText primary={<Typography style={{color: props.currentPage === 'home' ? '' :'#868686'}} color={props.currentPage === 'home' ? 'primary' :'textPrimary'}>Home</Typography>}/>
                 </ListItem>
             </Link>
             <Link underline='none' href="/instruction">
                 <ListItem button >
                     <ListItemIcon><TocIcon color={props.currentPage === 'instruction' ? 'primary' :'disabled'} /></ListItemIcon>
-                    <ListItemText primary={<Typography color={props.currentPage === 'instruction' ? 'primary' :'textPrimary'}>Instruction</Typography>} />
+                    <ListItemText primary={<Typography style={{color: props.currentPage === 'instruction' ? '' :'#868686'}} color={props.currentPage === 'instruction' ? 'primary' :'textPrimary'}>Instruction</Typography>}/>
                 </ListItem>
             </Link>
             <Link underline='none' href="/guardsInfo">
                 <ListItem button>
                     <ListItemIcon><PeopleIcon color={props.currentPage === 'guardsInfo' ? 'primary' :'disabled'} /></ListItemIcon>
-                    <ListItemText primary={<Typography color={props.currentPage === 'guardsInfo' ? 'primary' :'textPrimary'}>Guards Info</Typography>} />
+                    <ListItemText primary={<Typography style={{color: props.currentPage === 'guardsInfo' ? '' :'#868686'}} color={props.currentPage === 'guardsInfo' ? 'primary' :'textPrimary'}>Guards Info</Typography>}/>
                 </ListItem>
             </Link>
           {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
