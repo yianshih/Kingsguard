@@ -38,6 +38,8 @@
 }
 
 .Hp {
+    padding: 5px;
+    margin: 5px;
     align-items: center;
     display: flex;
 }

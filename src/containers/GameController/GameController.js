@@ -86,9 +86,6 @@ const GameController = (props) => {
         let newData = {...data}
         const isGuardsDead = [...newData.guards].filter( g => g.side === userSide && +g.hp === 0 && g.pos !== 'unknown')
         const unplacedGuards = [...newData.guards].filter( g => (g.side === userSide) && !g.isPlaced)
-        
-        
-        
 
         if (isGuardsDead.length > 0 && unplacedGuards.length > 0) {
             //console.log('should fill')
@@ -121,45 +118,37 @@ const GameController = (props) => {
                 turn: game.gameInfo.turn,
                 squares: newSquares
             })
-
             setIsFilling(true)
-            return
         }
         else {
             setIsFilling(false)
             setNewGameInfo(null)
-        }
-        
-        if ( (newData.currentState.split('_')[0] === 'fighting') && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState === 'blueJoined') ) ) {
-
-
-        }
-        //console.log(newData)
-        if (newData.currentState.split("_")[0] === 'fighting' && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState === 'blueJoined') ) ) {
-            //switch turn
-            //console.log('here')
-            const finalGuards = [...newData.guards].map( g => {
-                if (g.side === newData.turn) {
-                    return {...g, disabled: false}
-                }
-                else {
-                    return {...g,disabled: true}
-                }
-            })
-            newData.guards = finalGuards
-        }
-        
-        if (newData.turn !== userSide){
-            newData.bonus = false
-        }
-        let updates = {}
-        updates['/games/' + gameKey] = {...newData}
-        try {
-            //setLoading(true)
-            await db.ref().update(updates)
-            //setLoading(false)
-        } catch (error) {
-            console.log("Error Occurred",error.message)
+            if (newData.currentState.split("_")[0] === 'fighting' && ( (newData.turn !== game.gameInfo.turn) || (game.gameInfo.currentState === 'blueJoined') ) ) {
+                //switch turn
+                //console.log('here')
+                const finalGuards = [...newData.guards].map( g => {
+                    if (g.side === newData.turn) {
+                        return {...g, disabled: false}
+                    }
+                    else {
+                        return {...g,disabled: true}
+                    }
+                })
+                newData.guards = finalGuards
+            }
+            
+            if (newData.turn !== userSide){
+                newData.bonus = false
+            }
+            let updates = {}
+            updates['/games/' + gameKey] = {...newData}
+            try {
+                //setLoading(true)
+                await db.ref().update(updates)
+                //setLoading(false)
+            } catch (error) {
+                console.log("Error Occurred",error.message)
+            }
         }
     }
 

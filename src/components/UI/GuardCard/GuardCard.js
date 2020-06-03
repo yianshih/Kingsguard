@@ -75,8 +75,9 @@ const GuardCard = (props) => {
           color="primary"
           onClick={abilityClickHandler}
           className={classes.button}
-          startIcon={<GpsFixedRoundedIcon />}
+          // startIcon={<GpsFixedRoundedIcon />}
         >
+          <img alt="" src={require(`../../../assets/images/Ability/${props.name}Ability.png`)}></img>
           Ability
         </Button>
         {/* <Typography variant="body2" color="primary" component="p">  

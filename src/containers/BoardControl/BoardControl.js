@@ -77,7 +77,7 @@ const BoardControl = props => {
                         ...game.gameInfo,
                         attacked: 'unknown'
                     })
-                },2000)
+                },1500)
             }
             else if (!game.gameInfo.bonus && shouldBonus) {
                 //console.log("applying bonus")
@@ -294,9 +294,9 @@ const BoardControl = props => {
 
     }
 
-    // const jumpToFighting = () => {
-    //     props.setJumpToFighting()
-    // }
+    const jumpToFighting = () => {
+        props.setJumpToFighting()
+    }
 
     const fightingHandler = (turn) => {
         //props.checkKingBonus(turn)
@@ -394,7 +394,7 @@ const BoardControl = props => {
     
     return(
         <React.Fragment>
-            <FillUpModal show={isFilling} modalClosed={null}>
+            <FillUpModal show={isFilling && !isWaiting} modalClosed={null}>
                 <h3>One of your unit is dead,please choice an unit to fill </h3>
                 {renderFillUpGuards}
             </FillUpModal>
@@ -426,6 +426,12 @@ const BoardControl = props => {
                         disabled={!(game.gameInfo.currentState === 'blueJoined')}
                         onClick={gameStartHandler}>Game Start
                     </Button>
+                    {/* <Button
+                        variant="outlined"
+                        color="secondary" 
+                        disabled={!(game.gameInfo.currentState === 'blueJoined')}
+                        onClick={jumpToFighting}>Jump to fight
+                    </Button> */}
                 </div>
             </Modal>
             <AbilityModal show={game.gameInfo.currentState.split('_')[0] === 'placing' && game.gameInfo.turn === props.userSide && !isWaiting} modalClosed={null}>
